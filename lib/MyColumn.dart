@@ -5,13 +5,13 @@ class MyColumn extends StatefulWidget {
 
   MainAxisAlignment mainAxisAlignment;
   CrossAxisAlignment crossAxisAlignment;
-  List<MyCell> children;
+  int rowLen;
 
   MyColumn({
     Key? key,
     this.mainAxisAlignment = MainAxisAlignment.center,
     this.crossAxisAlignment = CrossAxisAlignment.center,
-    required this.children,
+    required this.rowLen,
   }) : super(key: key);
 
   @override
@@ -20,6 +20,18 @@ class MyColumn extends StatefulWidget {
 }
 
 class MyColumnState extends State<MyColumn> {
+
+  List<MyCell> children = [];
+  List<GlobalKey<MyCellState>> _myCellKeys = [];
+
+  @override
+  void initState(){
+    super.initState();
+
+    for(int i = 0; i < widget.rowLen; i++){
+      addCell(i);
+    }
+  }
 
   void setAlignment(int alignment){
     setState(() {
@@ -40,19 +52,33 @@ class MyColumnState extends State<MyColumn> {
 
   void addCell(int index){
     setState(() {
-      widget.children.insert(index, MyCell());
+      _myCellKeys.insert(index, GlobalKey());
+      children.insert(index, MyCell(key: _myCellKeys[index],));
     });
   }
 
   void delCell(int index){
     setState(() {
-      print("delete Cell \"${widget.children[index].getText()}\"");
-      widget.children.removeAt(index);
+      print("delete Cell \"${_myCellKeys[index].currentState!.getText()}\"");
+      _myCellKeys.removeAt(index);
+      children.removeAt(index);
     });
   }
 
   int getCellKey(int index){
-    return widget.children[index].cellKey;
+    return _myCellKeys[index].currentState!.cellKey;
+  }
+
+  void changeCellBold(index){
+    _myCellKeys[index].currentState!.changeBold();
+  }
+
+  void changeCellItalic(index){
+    _myCellKeys[index].currentState!.changeItalic();
+  }
+
+  void changeCellCode(index){
+    _myCellKeys[index].currentState!.changeCode();
   }
 
   @override
@@ -65,7 +91,7 @@ class MyColumnState extends State<MyColumn> {
         mainAxisAlignment: widget.mainAxisAlignment,
         crossAxisAlignment: widget.crossAxisAlignment,
         mainAxisSize: MainAxisSize.min,
-        children: widget.children,
+        children: children,
       ),
     );
   }

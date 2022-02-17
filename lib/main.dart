@@ -19,6 +19,7 @@ class MyApp extends StatelessWidget {
       title: '마크다운 표 생성기',
       theme: ThemeData(
         primarySwatch: Colors.blue,
+        canvasColor: Colors.white,
       ),
       home: const MyHomePage(),
     );
@@ -42,6 +43,7 @@ class _MyHomePageState extends State<MyHomePage> {
 
   List<List<int>> keyTable = [ [], [], [] ];
 
+
   @override
   void initState() {
     super.initState();
@@ -49,6 +51,11 @@ class _MyHomePageState extends State<MyHomePage> {
     for(int i = 0; i < 3; i++){
       insertColumn(i);
     }
+    keyTable = [
+      [1, 4, 7],
+      [2, 5, 8],
+      [3, 6, 9]
+    ];
   }
 
   List<int> findFocusedCell(){
@@ -71,7 +78,7 @@ class _MyHomePageState extends State<MyHomePage> {
     }
     printKeyTable();
     _myColumnKeys.insert(index, GlobalKey());
-    columns.insert(index, MyColumn(key: _myColumnKeys[index], children: List.generate(rowLen, (index) => MyCell()),));
+    columns.insert(index, MyColumn(key: _myColumnKeys[index], rowLen: rowLen,));
   }
 
   void deleteColumn(int index){
@@ -87,7 +94,7 @@ class _MyHomePageState extends State<MyHomePage> {
     keyTable.insert(index, []);
     for(int i = 0; i < columns.length; i++){
       _myColumnKeys[i].currentState?.addCell(index);
-      keyTable[index].add(CellKeyGenerator().nowKey());
+      keyTable[index].add(CellKeyGenerator().nowKey()+i+1);
     }
     printKeyTable();
     rowLen++;
@@ -273,15 +280,34 @@ class _MyHomePageState extends State<MyHomePage> {
             icon: Icon(Icons.format_align_right_rounded)),
         IconButton(
             onPressed: () {
-
+              List<int> list = findFocusedCell();
+              if( list.isEmpty ){
+                print("Error");
+                return ;
+              }
+              _myColumnKeys[list[1]].currentState?.changeCellBold(list[0]);
             },
             icon: Icon(Icons.format_bold_rounded)),
         IconButton(
             onPressed: () {
-
+              List<int> list = findFocusedCell();
+              if( list.isEmpty ){
+                print("Error");
+                return ;
+              }
+              _myColumnKeys[list[1]].currentState?.changeCellItalic(list[0]);
             },
             icon: Icon(Icons.format_italic_rounded)),
-
+        IconButton(
+            onPressed: () {
+              List<int> list = findFocusedCell();
+              if( list.isEmpty ){
+                print("Error");
+                return ;
+              }
+              _myColumnKeys[list[1]].currentState?.changeCellCode(list[0]);
+            },
+            icon: Icon(Icons.code_rounded)),
       ],
     );
   }
@@ -319,7 +345,7 @@ class _MyHomePageState extends State<MyHomePage> {
 | 😀	   |
     ''', style: TextStyle(fontFamily: "D2Coding"),);
   }
-  
+
   Widget makePreview(){
     return Container(
       padding: EdgeInsets.all(10),
