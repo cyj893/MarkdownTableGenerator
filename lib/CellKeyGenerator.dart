@@ -5,17 +5,10 @@ class CellKeyGenerator {
 
   CellKeyGenerator._internal();
 
-  factory CellKeyGenerator() {
-    return _cellKeyGenerator;
-  }
+  factory CellKeyGenerator() => _cellKeyGenerator;
 
-  int getKey(){
-    _key++;
-    return _key;
-  }
+  int generateKey() => ++_key;
 
-  int nowKey(){
-    return _key;
-  }
+  int getNowKey() => _key;
 
 }

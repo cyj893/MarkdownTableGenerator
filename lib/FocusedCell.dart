@@ -5,17 +5,10 @@ class FocusedCell {
 
   FocusedCell._internal();
 
-  factory FocusedCell() {
-    return _focusedCell;
-  }
+  factory FocusedCell() => _focusedCell;
 
-  void setKey(int key){
-    print("  now Cell Key = $key");
-    _key = key;
-  }
+  int getKey() => _key;
 
-  int getKey(){
-    return _key;
-  }
+  void setKey(int key) => _key = key;
 
 }
