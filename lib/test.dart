@@ -1,9 +1,9 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
-import 'CellKeyGenerator.dart';
-import 'MyCell.dart';
-import 'MyColumn.dart';
+import 'cell_key_generator.dart';
+import 'my_cell.dart';
+import 'my_column.dart';
 import 'test.dart';
 
 class testPage extends StatefulWidget {

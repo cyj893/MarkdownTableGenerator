@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'FocusedCell.dart';
-import 'CellKeyGenerator.dart';
+import 'focused_cell.dart';
+import 'cell_key_generator.dart';
 
 class MyCell extends StatefulWidget {
 

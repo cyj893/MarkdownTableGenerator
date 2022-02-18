@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
-import 'CellKeyGenerator.dart';
-import 'MyColumn.dart';
-import 'FocusedCell.dart';
+import 'cell_key_generator.dart';
+import 'my_column.dart';
+import 'focused_cell.dart';
 
 void main() {
   runApp(const MyApp());
