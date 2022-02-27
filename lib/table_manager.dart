@@ -159,6 +159,38 @@ class TableManagerState extends State<TableManager> {
     keyTable[list[0]][list[1]].currentState?.changeCode();
   }
 
+  String makeMdData(){
+    String mdData = "";
+    for(int i = 0; i < keyTable.length; i++){
+      mdData += "|";
+      for(int j = 0; j < keyTable[i].length; j++){
+        mdData += " ${keyTable[i][j].currentState?.getMDText() ?? ""}\t |";
+      }
+      mdData += "\n";
+      if( i == 0 ){
+        mdData += "|";
+        for(int j = 0; j < keyTable[i].length; j++){
+          int alignment = keyTable[i][j].currentState?.getAlignment() ?? 1;
+          switch( alignment ){
+            case 0:
+              mdData += " :-- |";
+              break;
+            case 1:
+              mdData += " :--: |";
+              break;
+            case 2:
+              mdData += " --: |";
+              break;
+            default:
+              debugPrint("makeMdData Error");
+          }
+        }
+        mdData += "\n";
+      }
+    }
+    return mdData;
+  }
+
   @override
   Widget build(BuildContext context) {
     widthProvider = context.watch<WidthProvider>().isChanged;
@@ -169,12 +201,10 @@ class TableManagerState extends State<TableManager> {
         if( a[0] >= b[0] ) return -1;
         return 1;
       });
-      print(list);
       double maxWidth = max<double>(list[0][0], 100.0);
       for(int i = 0; i < keyTable.length; i++){
         keyTable[i][indexes[1]].currentState?.setWidth(maxWidth);
       }
-      print("nowWidth: $maxWidth");
       context.read<WidthProvider>().endChanging();
     }
     return Column(

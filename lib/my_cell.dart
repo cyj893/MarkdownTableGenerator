@@ -77,6 +77,7 @@ class MyCellState extends State<MyCell> {
     if( _strike == 1 ) ret = "~~$ret~~";
     return ret;
   }
+  int getAlignment() => _alignment;
 
   void changeAlignment(int alignment) => setState(() { _alignment = alignment; });
   void changeBold() => setState(() { _fontWeight = 1 - _fontWeight; });

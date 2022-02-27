@@ -11,7 +11,7 @@ void main() {
       providers: [
         ChangeNotifierProvider(create: (_) => WidthProvider()),
       ],
-      child: MyApp(),
+      child: const MyApp(),
     ),
   );
 }
@@ -41,11 +41,9 @@ class MyHomePage extends StatefulWidget {
 
 class _MyHomePageState extends State<MyHomePage> {
 
-  int rowLen = 3;
   bool isRowSelected = false;
   bool isColSelected = false;
 
-  List<List<int>> keyTable = [ [], [], [] ];
   String mdData = "";
 
   TableManager? tableManager;
@@ -56,6 +54,12 @@ class _MyHomePageState extends State<MyHomePage> {
     super.initState();
 
     tableManager = TableManager(key: tableKey);
+    mdData = '''
+| 	 | 	 | 	 |
+| :--: | :--: | :--: |
+| 	 | 	 | 	 |
+| 	 | 	 | 	 |
+    ''';
   }
 
   Widget myDiv(double height) => Container(height: height, width: 1, color: Colors.grey[300]);
@@ -316,41 +320,7 @@ class _MyHomePageState extends State<MyHomePage> {
     );
   }
 
-  void makeMdData(){
-    /*
-    mdData = "";
-    for(int i = 0; i < keyTable.length; i++){
-      mdData += "|";
-      for(int j = 0; j < keyTable[i].length; j++){
-        mdData += " ${_myColumnKeys[j].currentState?.getCellMD(i) ?? ""}\t |";
-      }
-      mdData += "\n";
-      if( i == 0 ){
-        mdData += "|";
-        for(int j = 0; j < keyTable[i].length; j++){
-          int alignment = _myColumnKeys[j].currentState?.getAlignment() ?? 1;
-          switch( alignment ){
-            case 0:
-              mdData += " :-- |";
-              break;
-            case 1:
-              mdData += " :--: |";
-              break;
-            case 2:
-              mdData += " --: |";
-              break;
-            default:
-              debugPrint("makeMdData Error");
-          }
-        }
-        mdData += "\n";
-      }
-    }
-    */
-  }
-
   Widget makeCode(){
-    makeMdData();
     return Container(
       padding: const EdgeInsets.all(10),
       decoration: BoxDecoration(
@@ -386,6 +356,13 @@ class _MyHomePageState extends State<MyHomePage> {
               Row(
                 children: [
                   const Text("Result", style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),),
+                  IconButton(
+                      onPressed: () {
+                        setState(() {
+                          mdData = tableKey.currentState?.makeMdData() ?? "";
+                        });
+                      },
+                      icon: const Icon(Icons.refresh_rounded)),
                   IconButton(
                       onPressed: () {
                         debugPrint("copied");
