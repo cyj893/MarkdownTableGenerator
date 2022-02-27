@@ -201,3 +201,52 @@ class MCS extends State<MC> {
   }
 
 }
+
+
+/*
+
+
+                  print(_myColumnKeys[0].currentState!.context.size?.width);
+
+
+
+  int countWidth(String s){
+    int cnt = 0;
+    for(int i = 0; i < s.length; i++){
+      if( s[i].codeUnits[0] < 128 ) cnt++;
+      else cnt += 2;
+    }
+    return cnt;
+  }
+
+
+  List<String> MDs = [];
+  void makeMD4(){
+    MDs = [];
+    for(int i = 0; i < columns.length; i++){
+      int maxWidth = 0;
+      for(int j = 0; j < rowLen; j++){
+        String s = _myColumnKeys[i].currentState?.getCellMD(j) ?? "";
+        if( i == 0 ) MDs.add("|");
+        MDs[j] = "${MDs[j]} $s";
+        int cntWidth = countWidth(s);
+        maxWidth = maxWidth > cntWidth ? maxWidth : cntWidth;
+      }
+      for(int j = 0; j < rowLen; j++){
+        int cntWidth = countWidth(_myColumnKeys[i].currentState?.getCellMD(j) ?? "");
+        print("${MDs[j]} $cntWidth $maxWidth");
+        if( maxWidth - cntWidth < 4 ) MDs[j] = "${MDs[j]}\t |";
+        else MDs[j] = "${MDs[j]}\t\t |";
+      }
+    }
+    print(MDs);
+  }
+
+
+
+
+
+
+  https://pub.dev/packages/simple_markdown_editor/versions/0.1.6
+  https://www.tablesgenerator.com/markdown_tables
+ */
