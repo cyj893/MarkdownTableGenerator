@@ -7,9 +7,14 @@ import 'cell_key_generator.dart';
 class MyCell extends StatefulWidget {
 
   final double initialWidth;
+  final int initialFocused;
+  final Function function;
+
   const MyCell({
     Key? key,
     this.initialWidth = 100,
+    this.initialFocused = 0,
+    required this.function,
   }) : super(key: key);
 
   @override
@@ -23,11 +28,13 @@ class MyCellState extends State<MyCell> {
   final TextEditingController _controller = TextEditingController();
   final FocusNode _focusNode = FocusNode();
   int cellKey = -1;
+  int _focused = 0;
   int _alignment = 1;
   int _fontWeight = 0;
   int _fontStyle = 0;
   int _strike = 0;
   int _color = 0;
+  final List<Color> _focusedColors = [Colors.white, Colors.grey[200]!, Colors.grey[400]!];
   final List<TextAlign> _alignments = [TextAlign.left, TextAlign.center, TextAlign.right];
   final List<FontWeight> _fontWeights = [FontWeight.normal, FontWeight.bold];
   final List<FontStyle> _fontStyles = [FontStyle.normal, FontStyle.italic];
@@ -40,10 +47,12 @@ class MyCellState extends State<MyCell> {
 
     cellKey = CellKeyGenerator().generateKey();
     _width = widget.initialWidth;
+    _focused = widget.initialFocused;
     _focusNode.addListener(() {
       if( _focusNode.hasFocus ){
         debugPrint("Focus on $cellKey: \"${_controller.text}\"");
         FocusedCell().setKey(cellKey);
+        widget.function();
       }
     });
   }
@@ -79,6 +88,7 @@ class MyCellState extends State<MyCell> {
   }
   int getAlignment() => _alignment;
 
+  void setFocusedColor(int focused) => setState(() { _focused = focused; });
   void changeAlignment(int alignment) => setState(() { _alignment = alignment; });
   void changeBold() => setState(() { _fontWeight = 1 - _fontWeight; });
   void changeItalic() => setState(() { _fontStyle = 1 - _fontStyle; });
@@ -89,6 +99,7 @@ class MyCellState extends State<MyCell> {
   Widget build(BuildContext context) {
     return Container(
       decoration: BoxDecoration(
+        color: _focusedColors[_focused],
         border: Border.all(color: Colors.grey),
       ),
       padding: const EdgeInsets.all(10),

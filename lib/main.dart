@@ -88,12 +88,7 @@ class _MyHomePageState extends State<MyHomePage> {
               myDiv(10),
               InkWell(
                 onTap: () {
-                  List<int> list = tableKey.currentState!.findFocusedCell();
-                  if( list.isEmpty ){
-                    debugPrint("Error");
-                    return ;
-                  }
-                  tableKey.currentState!.insertRow(list[0]);
+                  tableKey.currentState!.insertRow(0);
                 },
                 child: SizedBox(
                   width: 50,
@@ -120,12 +115,7 @@ class _MyHomePageState extends State<MyHomePage> {
               myDiv(10),
               InkWell(
                 onTap: () {
-                  List<int> list = tableKey.currentState!.findFocusedCell();
-                  if( list.isEmpty ){
-                    debugPrint("Error");
-                    return ;
-                  }
-                  tableKey.currentState!.insertRow(list[0]+1);
+                  tableKey.currentState!.insertRow(1);
                 },
                 child: SizedBox(
                   width: 50,
@@ -154,12 +144,7 @@ class _MyHomePageState extends State<MyHomePage> {
                 width: 50,
                 child: IconButton(
                     onPressed: () {
-                      List<int> list = tableKey.currentState!.findFocusedCell();
-                      if( list.isEmpty ){
-                        debugPrint("Error");
-                        return ;
-                      }
-                      tableKey.currentState!.deleteRow(list[0]);
+                      tableKey.currentState!.deleteRow();
                     },
                     icon: const Icon(Icons.indeterminate_check_box_rounded)
                 ),
@@ -195,12 +180,7 @@ class _MyHomePageState extends State<MyHomePage> {
               InkWell(
                 onTap: () {
                   setState(() {
-                    List<int> list = tableKey.currentState!.findFocusedCell();
-                    if( list.isEmpty ){
-                      debugPrint("Error");
-                      return ;
-                    }
-                    tableKey.currentState!.insertColumn(list[1]);
+                    tableKey.currentState!.insertColumn(0);
                   });
                 },
                 child: SizedBox(
@@ -229,12 +209,7 @@ class _MyHomePageState extends State<MyHomePage> {
               InkWell(
                 onTap: () {
                   setState(() {
-                    List<int> list = tableKey.currentState!.findFocusedCell();
-                    if( list.isEmpty ){
-                      debugPrint("Error");
-                      return ;
-                    }
-                    tableKey.currentState!.insertColumn(list[1]+1);
+                    tableKey.currentState!.insertColumn(1);
                   });
                 },
                 child: SizedBox(
@@ -264,15 +239,7 @@ class _MyHomePageState extends State<MyHomePage> {
                 width: 50,
                 child: IconButton(
                     onPressed: () {
-                      if( tableKey.currentState!.colLen == 1 ) return ;
-                      setState(() {
-                        List<int> list = tableKey.currentState!.findFocusedCell();
-                        if( list.isEmpty ){
-                          debugPrint("Error");
-                          return ;
-                        }
-                        tableKey.currentState!.deleteColumn(list[1]);
-                      });
+                      tableKey.currentState!.deleteColumn();
                     },
                     icon: const Icon(Icons.indeterminate_check_box_rounded)
                 ),

@@ -35,7 +35,7 @@ class TableManagerState extends State<TableManager> {
 
     for(int i = 0; i < 3; i++){
       keyTable.insert(i, List.generate(colLen, (index) => GlobalKey()));
-      cellTable.insert(i, List.generate(colLen, (j) => MyCell(key: keyTable[i][j])));
+      cellTable.insert(i, List.generate(colLen, (j) => MyCell(key: keyTable[i][j], function: setFocusedColor)));
     }
   }
 
@@ -53,49 +53,85 @@ class TableManagerState extends State<TableManager> {
     return ret;
   }
 
-  void insertRow(int index){
-    List<double> list = [];
+  void insertRow(int location){
+    List<int> list = findFocusedCell();
+    if( list.isEmpty ){
+      debugPrint("Error");
+      return ;
+    }
+
+    List<double> maxList = [];
     for(int i = 0; i < colLen; i++){
       double maxWidth = 100.0;
       for(int j = 0; j < rowLen; j++){
         maxWidth = max<double>(maxWidth, keyTable[j][i].currentState!.getWidth()+30);
       }
-      list.add(maxWidth);
+      maxList.add(maxWidth);
     }
     setState(() {
-      keyTable.insert(index, List.generate(colLen, (i) => GlobalKey()));
-      cellTable.insert(index, List.generate(colLen, (i) => MyCell(key: keyTable[index][i], initialWidth: list[i],)));
+      keyTable.insert(list[0]+location, List.generate(colLen, (i) => GlobalKey()));
+      cellTable.insert(list[0]+location, List.generate(colLen, (j) {
+        return MyCell(
+          key: keyTable[list[0]+location][j],
+          function: setFocusedColor,
+          initialWidth: maxList[j],
+          initialFocused: j == list[1] ? 1 : 0,
+        );
+      }));
       printKeyTable();
       rowLen++;
     });
   }
 
-  void deleteRow(int index){
+  void deleteRow(){
+    List<int> list = findFocusedCell();
+    if( list.isEmpty ){
+      debugPrint("Error");
+      return ;
+    }
+
+    if( rowLen == 1 ) return ;
     setState(() {
-      if( rowLen == 1 ) return ;
-      keyTable.removeAt(index);
-      cellTable.removeAt(index);
+      keyTable.removeAt(list[0]);
+      cellTable.removeAt(list[0]);
       printKeyTable();
       rowLen--;
     });
   }
 
-  void insertColumn(int index){
+  void insertColumn(int location){
+    List<int> list = findFocusedCell();
+    if( list.isEmpty ){
+      debugPrint("Error");
+      return ;
+    }
+
     setState(() {
       for(int i = 0; i < rowLen; i++){
-        keyTable[i].insert(index, GlobalKey());
-        cellTable[i].insert(index, MyCell(key: keyTable[i][index]));
+        keyTable[i].insert(list[1]+location, GlobalKey());
+        cellTable[i].insert(list[1]+location, MyCell(
+            key: keyTable[i][list[1]+location],
+            function: setFocusedColor,
+            initialFocused: i == list[0] ? 1 : 0,
+        ));
       }
       printKeyTable();
       colLen++;
     });
   }
 
-  void deleteColumn(int index){
+  void deleteColumn(){
+    List<int> list = findFocusedCell();
+    if( list.isEmpty ){
+      debugPrint("Error");
+      return ;
+    }
+
+    if( colLen == 1 ) return ;
     setState(() {
       for(int i = 0; i < rowLen; i++){
-        keyTable[i].removeAt(index);
-        cellTable[i].removeAt(index);
+        keyTable[i].removeAt(list[1]);
+        cellTable[i].removeAt(list[1]);
       }
       printKeyTable();
       colLen--;
@@ -110,6 +146,21 @@ class TableManagerState extends State<TableManager> {
       }
     }
     print("");
+  }
+
+  void setFocusedColor(){
+    List<int> list = findFocusedCell();
+    if( list.isEmpty ){
+      debugPrint("Error");
+      return ;
+    }
+    for(int i = 0; i < keyTable.length; i++){
+      for(int j = 0; j < keyTable[i].length; j++){
+        if( i == list[0] && j == list[1] ) keyTable[i][j].currentState?.setFocusedColor(2);
+        else if( i == list[0] || j == list[1] ) keyTable[i][j].currentState?.setFocusedColor(1);
+        else keyTable[i][j].currentState?.setFocusedColor(0);
+      }
+    }
   }
 
   void setAlignment(int alignment){
