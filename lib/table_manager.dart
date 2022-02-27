@@ -1,8 +1,8 @@
-import 'dart:math';
-
 import 'package:flutter/material.dart';
-import 'package:markdown_table_generator/width_provider.dart';
+import 'dart:math';
 import 'package:provider/src/provider.dart';
+
+import 'width_provider.dart';
 import 'focused_cell.dart';
 import 'my_cell.dart';
 
@@ -21,7 +21,7 @@ class TableManagerState extends State<TableManager> {
 
   bool widthProvider = false;
 
-  int rowLen = 0;
+  int rowLen = 3;
   int colLen = 3;
   bool isRowSelected = false;
   bool isColSelected = false;
@@ -34,8 +34,8 @@ class TableManagerState extends State<TableManager> {
     super.initState();
 
     for(int i = 0; i < 3; i++){
-      print("insert");
-      insertRow(i);
+      keyTable.insert(i, List.generate(colLen, (index) => GlobalKey()));
+      cellTable.insert(i, List.generate(colLen, (j) => MyCell(key: keyTable[i][j])));
     }
   }
 
@@ -54,9 +54,17 @@ class TableManagerState extends State<TableManager> {
   }
 
   void insertRow(int index){
+    List<double> list = [];
+    for(int i = 0; i < colLen; i++){
+      double maxWidth = 100.0;
+      for(int j = 0; j < rowLen; j++){
+        maxWidth = max<double>(maxWidth, keyTable[j][i].currentState!.getWidth()+30);
+      }
+      list.add(maxWidth);
+    }
     setState(() {
       keyTable.insert(index, List.generate(colLen, (i) => GlobalKey()));
-      cellTable.insert(index, List.generate(colLen, (i) => MyCell(key: keyTable[index][i])));
+      cellTable.insert(index, List.generate(colLen, (i) => MyCell(key: keyTable[index][i], initialWidth: list[i],)));
       printKeyTable();
       rowLen++;
     });
@@ -104,6 +112,53 @@ class TableManagerState extends State<TableManager> {
     print("");
   }
 
+  void setAlignment(int alignment){
+    List<int> list = findFocusedCell();
+    if( list.isEmpty ){
+      debugPrint("Error");
+      return ;
+    }
+    for(int i = 0; i < keyTable.length; i++){
+      keyTable[i][list[1]].currentState?.changeAlignment(alignment);
+    }
+  }
+
+  void changeCellBold() {
+    List<int> list = findFocusedCell();
+    if( list.isEmpty ){
+      debugPrint("Error");
+      return ;
+    }
+    keyTable[list[0]][list[1]].currentState?.changeBold();
+  }
+
+  void changeCellItalic() {
+    List<int> list = findFocusedCell();
+    if( list.isEmpty ){
+      debugPrint("Error");
+      return ;
+    }
+    keyTable[list[0]][list[1]].currentState?.changeItalic();
+  }
+
+  void changeCellStrike() {
+    List<int> list = findFocusedCell();
+    if( list.isEmpty ){
+      debugPrint("Error");
+      return ;
+    }
+    keyTable[list[0]][list[1]].currentState?.changeStrike();
+  }
+
+  void changeCellCode() {
+    List<int> list = findFocusedCell();
+    if( list.isEmpty ){
+      debugPrint("Error");
+      return ;
+    }
+    keyTable[list[0]][list[1]].currentState?.changeCode();
+  }
+
   @override
   Widget build(BuildContext context) {
     widthProvider = context.watch<WidthProvider>().isChanged;
@@ -125,7 +180,7 @@ class TableManagerState extends State<TableManager> {
     return Column(
       children: List.generate(
           rowLen, (i) => Row(
-            children: List.generate(colLen, (j) => cellTable[i][j]),)),
+        children: List.generate(colLen, (j) => cellTable[i][j]),)),
     );
   }
 

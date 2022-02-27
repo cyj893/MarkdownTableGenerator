@@ -3,9 +3,6 @@ import 'package:flutter/services.dart';
 import 'package:markdown_table_generator/width_provider.dart';
 import 'package:provider/provider.dart';
 
-import 'cell_key_generator.dart';
-import 'my_column.dart';
-import 'focused_cell.dart';
 import 'table_manager.dart';
 
 void main() {
@@ -44,8 +41,6 @@ class MyHomePage extends StatefulWidget {
 
 class _MyHomePageState extends State<MyHomePage> {
 
-  List<MyColumn> columns = [];
-  final List<GlobalKey<MyColumnState>> _myColumnKeys = [];
   int rowLen = 3;
   bool isRowSelected = false;
   bool isColSelected = false;
@@ -265,7 +260,7 @@ class _MyHomePageState extends State<MyHomePage> {
                 width: 50,
                 child: IconButton(
                     onPressed: () {
-                      if( columns.length == 1 ) return ;
+                      if( tableKey.currentState!.colLen == 1 ) return ;
                       setState(() {
                         List<int> list = tableKey.currentState!.findFocusedCell();
                         if( list.isEmpty ){
@@ -286,15 +281,9 @@ class _MyHomePageState extends State<MyHomePage> {
 
   Widget makeAlignBtn(int alignment, Icon icon){
     return IconButton(
-        onPressed: () {
-          List<int> list = tableKey.currentState!.findFocusedCell();
-          if( list.isEmpty ){
-            debugPrint("Error");
-            return ;
-          }
-          _myColumnKeys[list[1]].currentState?.setAlignment(alignment);
-        },
-        icon: icon);
+        onPressed: () { tableKey.currentState!.setAlignment(alignment); },
+        icon: icon
+    );
   }
 
   Widget makeMenu(){
@@ -311,64 +300,24 @@ class _MyHomePageState extends State<MyHomePage> {
           makeAlignBtn(2, const Icon(Icons.format_align_right_rounded)),
           myDiv(40),
           IconButton(
-              onPressed: () {
-                List<int> list = tableKey.currentState!.findFocusedCell();
-                if( list.isEmpty ){
-                  debugPrint("Error");
-                  return ;
-                }
-                _myColumnKeys[list[1]].currentState?.changeCellBold(list[0]);
-              },
+              onPressed: () { tableKey.currentState!.changeCellBold(); },
               icon: const Icon(Icons.format_bold_rounded)),
           IconButton(
-              onPressed: () {
-                List<int> list = tableKey.currentState!.findFocusedCell();
-                if( list.isEmpty ){
-                  debugPrint("Error");
-                  return ;
-                }
-                _myColumnKeys[list[1]].currentState?.changeCellItalic(list[0]);
-              },
+              onPressed: () { tableKey.currentState!.changeCellItalic(); },
               icon: const Icon(Icons.format_italic_rounded)),
           IconButton(
-              onPressed: () {
-                List<int> list = tableKey.currentState!.findFocusedCell();
-                if( list.isEmpty ){
-                  debugPrint("Error");
-                  return ;
-                }
-                _myColumnKeys[list[1]].currentState?.changeCellStrike(list[0]);
-              },
+              onPressed: () { tableKey.currentState!.changeCellStrike(); },
               icon: const Icon(Icons.strikethrough_s_rounded)),
           IconButton(
-              onPressed: () {
-                List<int> list = tableKey.currentState!.findFocusedCell();
-                if( list.isEmpty ){
-                  debugPrint("Error");
-                  return ;
-                }
-                _myColumnKeys[list[1]].currentState?.changeCellCode(list[0]);
-              },
+              onPressed: () { tableKey.currentState!.changeCellCode(); },
               icon: const Icon(Icons.code_rounded)),
         ],
       ),
     );
   }
 
-  Widget makeEditor(){
-    return Container(
-      decoration: BoxDecoration(
-        border: Border.all(color: Colors.grey),
-      ),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.start,
-        mainAxisSize: MainAxisSize.min,
-        children: columns,
-      ),
-    );
-  }
-
   void makeMdData(){
+    /*
     mdData = "";
     for(int i = 0; i < keyTable.length; i++){
       mdData += "|";
@@ -397,6 +346,7 @@ class _MyHomePageState extends State<MyHomePage> {
         mdData += "\n";
       }
     }
+    */
   }
 
   Widget makeCode(){

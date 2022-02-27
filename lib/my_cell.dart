@@ -6,8 +6,10 @@ import 'cell_key_generator.dart';
 
 class MyCell extends StatefulWidget {
 
+  final double initialWidth;
   const MyCell({
     Key? key,
+    this.initialWidth = 100,
   }) : super(key: key);
 
   @override
@@ -21,10 +23,12 @@ class MyCellState extends State<MyCell> {
   final TextEditingController _controller = TextEditingController();
   final FocusNode _focusNode = FocusNode();
   int cellKey = -1;
+  int _alignment = 1;
   int _fontWeight = 0;
   int _fontStyle = 0;
   int _strike = 0;
   int _color = 0;
+  final List<TextAlign> _alignments = [TextAlign.left, TextAlign.center, TextAlign.right];
   final List<FontWeight> _fontWeights = [FontWeight.normal, FontWeight.bold];
   final List<FontStyle> _fontStyles = [FontStyle.normal, FontStyle.italic];
   final List<TextDecoration> _textDecorations = [TextDecoration.none, TextDecoration.lineThrough];
@@ -35,6 +39,7 @@ class MyCellState extends State<MyCell> {
     super.initState();
 
     cellKey = CellKeyGenerator().generateKey();
+    _width = widget.initialWidth;
     _focusNode.addListener(() {
       if( _focusNode.hasFocus ){
         debugPrint("Focus on $cellKey: \"${_controller.text}\"");
@@ -73,6 +78,7 @@ class MyCellState extends State<MyCell> {
     return ret;
   }
 
+  void changeAlignment(int alignment) => setState(() { _alignment = alignment; });
   void changeBold() => setState(() { _fontWeight = 1 - _fontWeight; });
   void changeItalic() => setState(() { _fontStyle = 1 - _fontStyle; });
   void changeStrike() => setState(() { _strike = 1 - _strike; });
@@ -93,6 +99,7 @@ class MyCellState extends State<MyCell> {
           print(string);
           context.read<WidthProvider>().changeWidth(getWidth()+30);
         },
+        textAlign: _alignments[_alignment],
         style: TextStyle(
           fontSize: 16,
           fontWeight: _fontWeights[_fontWeight],
