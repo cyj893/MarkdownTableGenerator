@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:markdown_table_generator/width_provider.dart';
+import 'package:provider/src/provider.dart';
 import 'focused_cell.dart';
 import 'cell_key_generator.dart';
 
@@ -15,9 +17,10 @@ class MyCell extends StatefulWidget {
 
 class MyCellState extends State<MyCell> {
 
+  double _width = 100.0;
   final TextEditingController _controller = TextEditingController();
   final FocusNode _focusNode = FocusNode();
-  int cellKey = CellKeyGenerator().generateKey();
+  int cellKey = -1;
   int _fontWeight = 0;
   int _fontStyle = 0;
   int _strike = 0;
@@ -31,6 +34,7 @@ class MyCellState extends State<MyCell> {
   void initState(){
     super.initState();
 
+    cellKey = CellKeyGenerator().generateKey();
     _focusNode.addListener(() {
       if( _focusNode.hasFocus ){
         debugPrint("Focus on $cellKey: \"${_controller.text}\"");
@@ -39,6 +43,24 @@ class MyCellState extends State<MyCell> {
     });
   }
 
+  Size getTextSize(String text, TextStyle textStyle){
+    return (TextPainter(
+        text: TextSpan(text: text, style: textStyle),
+        maxLines: 1,
+        textScaleFactor: MediaQuery.of(context).textScaleFactor,
+        textDirection: TextDirection.ltr)
+      ..layout())
+        .size;
+  }
+
+  void setWidth(double width) => setState(() { _width = width; });
+  double getWidth() => getTextSize(_controller.text, TextStyle(
+    fontSize: 16,
+    fontWeight: _fontWeights[_fontWeight],
+    fontStyle: _fontStyles[_fontStyle],
+    decoration: _textDecorations[_strike],
+    backgroundColor: _colors[_color],
+  )).width;
   String getText() => _controller.text;
 
   String getMDText(){
@@ -59,19 +81,25 @@ class MyCellState extends State<MyCell> {
   @override
   Widget build(BuildContext context) {
     return Container(
+      decoration: BoxDecoration(
+        border: Border.all(color: Colors.grey),
+      ),
       padding: const EdgeInsets.all(10),
-      constraints: const BoxConstraints(minWidth: 100),
-      child: IntrinsicWidth(
-          child: TextField(
-            controller: _controller,
-            focusNode: _focusNode,
-            style: TextStyle(
-              fontWeight: _fontWeights[_fontWeight],
-              fontStyle: _fontStyles[_fontStyle],
-              decoration: _textDecorations[_strike],
-              backgroundColor: _colors[_color],
-            ),
-          )
+      width: _width,
+      child: TextField(
+        controller: _controller,
+        focusNode: _focusNode,
+        onChanged: (string) {
+          print(string);
+          context.read<WidthProvider>().changeWidth(getWidth()+30);
+        },
+        style: TextStyle(
+          fontSize: 16,
+          fontWeight: _fontWeights[_fontWeight],
+          fontStyle: _fontStyles[_fontStyle],
+          decoration: _textDecorations[_strike],
+          backgroundColor: _colors[_color],
+        ),
       ),
     );
   }

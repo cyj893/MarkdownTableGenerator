@@ -1,12 +1,22 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:markdown_table_generator/width_provider.dart';
+import 'package:provider/provider.dart';
 
 import 'cell_key_generator.dart';
 import 'my_column.dart';
 import 'focused_cell.dart';
+import 'table_manager.dart';
 
 void main() {
-  runApp(const MyApp());
+  runApp(
+    MultiProvider(
+      providers: [
+        ChangeNotifierProvider(create: (_) => WidthProvider()),
+      ],
+      child: MyApp(),
+    ),
+  );
 }
 
 class MyApp extends StatelessWidget {
@@ -43,78 +53,14 @@ class _MyHomePageState extends State<MyHomePage> {
   List<List<int>> keyTable = [ [], [], [] ];
   String mdData = "";
 
+  TableManager? tableManager;
+  GlobalKey<TableManagerState> tableKey = GlobalKey();
+
   @override
   void initState() {
     super.initState();
 
-    for(int i = 0; i < 3; i++){
-      insertColumn(i);
-    }
-    keyTable = [
-      [1, 4, 7],
-      [2, 5, 8],
-      [3, 6, 9]
-    ];
-  }
-
-  List<int> findFocusedCell(){
-    List<int> ret = [];
-    int focusKey = FocusedCell().getKey();
-    for(int i = 0; i < keyTable.length; i++){
-      for(int j = 0; j < keyTable[i].length; j++){
-        if( _myColumnKeys[j].currentState?.getCellKey(i) == focusKey ){
-          ret = [i, j];
-          break;
-        }
-      }
-    }
-    return ret;
-  }
-
-  void insertRow(int index){
-    keyTable.insert(index, []);
-    for(int i = 0; i < columns.length; i++){
-      _myColumnKeys[i].currentState?.insertCell(index);
-      keyTable[index].add(CellKeyGenerator().getNowKey()+i+1);
-    }
-    printKeyTable();
-    rowLen++;
-  }
-
-  void deleteRow(int index){
-    if( rowLen == 1 ) return ;
-    for(int i = 0; i < columns.length; i++){
-      _myColumnKeys[i].currentState?.delCell(index);
-    }
-    keyTable.removeAt(index);
-    printKeyTable();
-    rowLen--;
-  }
-
-  void insertColumn(int index){
-    for(int i = 0; i < rowLen; i++){
-      keyTable[i].insert(index, CellKeyGenerator().getNowKey()+i+1);
-    }
-    printKeyTable();
-    _myColumnKeys.insert(index, GlobalKey());
-    columns.insert(index, MyColumn(key: _myColumnKeys[index], rowLen: rowLen,));
-  }
-
-  void deleteColumn(int index){
-    for(int i = 0; i < rowLen; i++){
-      keyTable[i].removeAt(index);
-    }
-    printKeyTable();
-    columns.removeAt(index);
-    _myColumnKeys.removeAt(index);
-  }
-
-  void printKeyTable(){
-    print("");
-    for(int i = 0; i < keyTable.length; i++){
-      print(keyTable[i]);
-    }
-    print("");
+    tableManager = TableManager(key: tableKey);
   }
 
   Widget myDiv(double height) => Container(height: height, width: 1, color: Colors.grey[300]);
@@ -143,12 +89,12 @@ class _MyHomePageState extends State<MyHomePage> {
               myDiv(10),
               InkWell(
                 onTap: () {
-                  List<int> list = findFocusedCell();
+                  List<int> list = tableKey.currentState!.findFocusedCell();
                   if( list.isEmpty ){
                     debugPrint("Error");
                     return ;
                   }
-                  insertRow(list[0]);
+                  tableKey.currentState!.insertRow(list[0]);
                 },
                 child: SizedBox(
                   width: 50,
@@ -175,12 +121,12 @@ class _MyHomePageState extends State<MyHomePage> {
               myDiv(10),
               InkWell(
                 onTap: () {
-                  List<int> list = findFocusedCell();
+                  List<int> list = tableKey.currentState!.findFocusedCell();
                   if( list.isEmpty ){
                     debugPrint("Error");
                     return ;
                   }
-                  insertRow(list[0]+1);
+                  tableKey.currentState!.insertRow(list[0]+1);
                 },
                 child: SizedBox(
                   width: 50,
@@ -209,12 +155,12 @@ class _MyHomePageState extends State<MyHomePage> {
                 width: 50,
                 child: IconButton(
                     onPressed: () {
-                      List<int> list = findFocusedCell();
+                      List<int> list = tableKey.currentState!.findFocusedCell();
                       if( list.isEmpty ){
                         debugPrint("Error");
                         return ;
                       }
-                      deleteRow(list[0]);
+                      tableKey.currentState!.deleteRow(list[0]);
                     },
                     icon: const Icon(Icons.indeterminate_check_box_rounded)
                 ),
@@ -250,12 +196,12 @@ class _MyHomePageState extends State<MyHomePage> {
               InkWell(
                 onTap: () {
                   setState(() {
-                    List<int> list = findFocusedCell();
+                    List<int> list = tableKey.currentState!.findFocusedCell();
                     if( list.isEmpty ){
                       debugPrint("Error");
                       return ;
                     }
-                    insertColumn(list[1]);
+                    tableKey.currentState!.insertColumn(list[1]);
                   });
                 },
                 child: SizedBox(
@@ -284,12 +230,12 @@ class _MyHomePageState extends State<MyHomePage> {
               InkWell(
                 onTap: () {
                   setState(() {
-                    List<int> list = findFocusedCell();
+                    List<int> list = tableKey.currentState!.findFocusedCell();
                     if( list.isEmpty ){
                       debugPrint("Error");
                       return ;
                     }
-                    insertColumn(list[1]+1);
+                    tableKey.currentState!.insertColumn(list[1]+1);
                   });
                 },
                 child: SizedBox(
@@ -321,12 +267,12 @@ class _MyHomePageState extends State<MyHomePage> {
                     onPressed: () {
                       if( columns.length == 1 ) return ;
                       setState(() {
-                        List<int> list = findFocusedCell();
+                        List<int> list = tableKey.currentState!.findFocusedCell();
                         if( list.isEmpty ){
                           debugPrint("Error");
                           return ;
                         }
-                        deleteColumn(list[1]);
+                        tableKey.currentState!.deleteColumn(list[1]);
                       });
                     },
                     icon: const Icon(Icons.indeterminate_check_box_rounded)
@@ -341,7 +287,7 @@ class _MyHomePageState extends State<MyHomePage> {
   Widget makeAlignBtn(int alignment, Icon icon){
     return IconButton(
         onPressed: () {
-          List<int> list = findFocusedCell();
+          List<int> list = tableKey.currentState!.findFocusedCell();
           if( list.isEmpty ){
             debugPrint("Error");
             return ;
@@ -366,7 +312,7 @@ class _MyHomePageState extends State<MyHomePage> {
           myDiv(40),
           IconButton(
               onPressed: () {
-                List<int> list = findFocusedCell();
+                List<int> list = tableKey.currentState!.findFocusedCell();
                 if( list.isEmpty ){
                   debugPrint("Error");
                   return ;
@@ -376,7 +322,7 @@ class _MyHomePageState extends State<MyHomePage> {
               icon: const Icon(Icons.format_bold_rounded)),
           IconButton(
               onPressed: () {
-                List<int> list = findFocusedCell();
+                List<int> list = tableKey.currentState!.findFocusedCell();
                 if( list.isEmpty ){
                   debugPrint("Error");
                   return ;
@@ -386,7 +332,7 @@ class _MyHomePageState extends State<MyHomePage> {
               icon: const Icon(Icons.format_italic_rounded)),
           IconButton(
               onPressed: () {
-                List<int> list = findFocusedCell();
+                List<int> list = tableKey.currentState!.findFocusedCell();
                 if( list.isEmpty ){
                   debugPrint("Error");
                   return ;
@@ -396,7 +342,7 @@ class _MyHomePageState extends State<MyHomePage> {
               icon: const Icon(Icons.strikethrough_s_rounded)),
           IconButton(
               onPressed: () {
-                List<int> list = findFocusedCell();
+                List<int> list = tableKey.currentState!.findFocusedCell();
                 if( list.isEmpty ){
                   debugPrint("Error");
                   return ;
@@ -485,7 +431,7 @@ class _MyHomePageState extends State<MyHomePage> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: <Widget>[
               makeMenu(),
-              makeEditor(),
+              tableManager!,
               const SizedBox(height: 20,),
               Row(
                 children: [
