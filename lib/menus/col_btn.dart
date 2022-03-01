@@ -98,15 +98,16 @@ class ColBtnState extends State<ColBtn> {
                 ),
               ),
               verticalDiv(10),
-              addLeftColBtn(),
+              Tooltip(message: "add to the left", child: addLeftColBtn(),),
               verticalDiv(10),
-              addRightColBtn(),
+              Tooltip(message: "add to the right", child: addRightColBtn(),),
               verticalDiv(10),
               SizedBox(
                 width: 50,
                 child: IconButton(
-                    onPressed: () { tableHelper.deleteColumn(); },
-                    icon: const Icon(Icons.indeterminate_check_box_rounded)
+                  tooltip: "delete",
+                  onPressed: () { tableHelper.deleteColumn(); },
+                  icon: const Icon(Icons.indeterminate_check_box_rounded)
                 ),
               ),
             ],

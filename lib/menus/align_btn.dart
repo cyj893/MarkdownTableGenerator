@@ -10,10 +10,11 @@ class AlignBtn extends StatelessWidget {
 
   final TableHelper tableHelper = TableHelper();
 
-  Widget makeAlignBtn(int alignment, Icon icon){
+  Widget makeAlignBtn(int alignment, String alignmentString, Icon icon){
     return IconButton(
-        onPressed: () { tableHelper.setAlignment(alignment); },
-        icon: icon
+      tooltip: alignmentString,
+      onPressed: () { tableHelper.setAlignment(alignment); },
+      icon: icon
     );
   }
 
@@ -21,9 +22,9 @@ class AlignBtn extends StatelessWidget {
   Widget build(BuildContext context) {
     return Row(
       children: [
-        makeAlignBtn(0, const Icon(Icons.format_align_left_rounded)),
-        makeAlignBtn(1, const Icon(Icons.format_align_center_rounded)),
-        makeAlignBtn(2, const Icon(Icons.format_align_right_rounded)),
+        makeAlignBtn(0, "left", const Icon(Icons.format_align_left_rounded)),
+        makeAlignBtn(1, "center", const Icon(Icons.format_align_center_rounded)),
+        makeAlignBtn(2, "right", const Icon(Icons.format_align_right_rounded)),
       ],
     );
   }

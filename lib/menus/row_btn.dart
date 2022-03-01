@@ -26,7 +26,7 @@ class RowBtnState extends State<RowBtn> {
 
   }
 
-  Widget addUpRowBtn(){
+  Widget addOnTopBtn(){
     return InkWell(
       onTap: () { tableHelper.insertRow(0); },
       child: SizedBox(
@@ -53,7 +53,7 @@ class RowBtnState extends State<RowBtn> {
     );
   }
 
-  Widget addBottomRowBtn(){
+  Widget addBelowBtn(){
     return InkWell(
       onTap: () { tableHelper.insertRow(1); },
       child: SizedBox(
@@ -98,15 +98,16 @@ class RowBtnState extends State<RowBtn> {
                 ),
               ),
               verticalDiv(10),
-              addUpRowBtn(),
+              Tooltip(message: "add on top", child: addOnTopBtn(),),
               verticalDiv(10),
-              addBottomRowBtn(),
+              Tooltip(message: "add below", child: addBelowBtn(),),
               verticalDiv(10),
               SizedBox(
                 width: 50,
                 child: IconButton(
-                    onPressed: () { tableHelper.deleteRow(); },
-                    icon: const Icon(Icons.indeterminate_check_box_rounded)
+                  tooltip: "delete",
+                  onPressed: () { tableHelper.deleteRow(); },
+                  icon: const Icon(Icons.indeterminate_check_box_rounded)
                 ),
               ),
             ],
