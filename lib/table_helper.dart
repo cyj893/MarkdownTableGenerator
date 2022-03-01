@@ -21,9 +21,9 @@ class TableHelper {
 
   void setAlignment(int alignment) => tableKey.currentState!.setAlignment(alignment);
   void changeCellBold() => tableKey.currentState!.changeCellBold();
-  void changeCellItalic() => tableKey.currentState!.changeCellBold();
-  void changeCellStrike() => tableKey.currentState!.changeCellBold();
-  void changeCellCode() => tableKey.currentState!.changeCellBold();
+  void changeCellItalic() => tableKey.currentState!.changeCellItalic();
+  void changeCellStrike() => tableKey.currentState!.changeCellStrike();
+  void changeCellCode() => tableKey.currentState!.changeCellCode();
 
   String makeMdData() => tableKey.currentState?.makeMdData() ?? "";
 
