@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import '../my_div.dart';
 import '../table_helper.dart';
 
 class TextDecoBtn extends StatelessWidget {
@@ -26,6 +27,10 @@ class TextDecoBtn extends StatelessWidget {
         IconButton(
             onPressed: () { tableHelper.changeCellCode(); },
             icon: const Icon(Icons.code_rounded)),
+        verticalDiv(10),
+        IconButton(
+            onPressed: () { tableHelper.clearCellDeco(); },
+            icon: const Icon(Icons.clear_rounded)),
       ],
     );
   }

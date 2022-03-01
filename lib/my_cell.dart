@@ -33,7 +33,7 @@ class MyCellState extends State<MyCell> {
   int _fontWeight = 0;
   int _fontStyle = 0;
   int _strike = 0;
-  int _color = 0;
+  int _codeColor = 0;
   final List<Color> _focusedColors = [Colors.white, Colors.grey[200]!, Colors.grey[400]!];
   final List<TextAlign> _alignments = [TextAlign.left, TextAlign.center, TextAlign.right];
   final List<FontWeight> _fontWeights = [FontWeight.normal, FontWeight.bold];
@@ -73,14 +73,14 @@ class MyCellState extends State<MyCell> {
     fontWeight: _fontWeights[_fontWeight],
     fontStyle: _fontStyles[_fontStyle],
     decoration: _textDecorations[_strike],
-    backgroundColor: _colors[_color],
+    backgroundColor: _colors[_codeColor],
   )).width;
   String getText() => _controller.text;
 
   String getMDText(){
     String ret = _controller.text;
     if( ret == "" ) return ret;
-    if( _color == 1 ) ret = "`$ret`";
+    if( _codeColor == 1 ) ret = "`$ret`";
     if( _fontWeight == 1 ) ret = "**$ret**";
     if( _fontStyle == 1 ) ret = "_${ret}_";
     if( _strike == 1 ) ret = "~~$ret~~";
@@ -93,7 +93,15 @@ class MyCellState extends State<MyCell> {
   void changeBold() => setState(() { _fontWeight = 1 - _fontWeight; });
   void changeItalic() => setState(() { _fontStyle = 1 - _fontStyle; });
   void changeStrike() => setState(() { _strike = 1 - _strike; });
-  void changeCode() => setState(() { _color = 1 - _color; });
+  void changeCode() => setState(() { _codeColor = 1 - _codeColor; });
+  void clearDeco(){
+    setState(() {
+      _fontWeight = 0;
+      _fontStyle = 0;
+      _strike = 0;
+      _codeColor = 0;
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -117,7 +125,7 @@ class MyCellState extends State<MyCell> {
           fontWeight: _fontWeights[_fontWeight],
           fontStyle: _fontStyles[_fontStyle],
           decoration: _textDecorations[_strike],
-          backgroundColor: _colors[_color],
+          backgroundColor: _colors[_codeColor],
         ),
       ),
     );

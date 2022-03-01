@@ -18,6 +18,7 @@ class TableMenu extends StatelessWidget {
       height: 50,
       child: Row(
         children: [
+          verticalDiv(40),
           const RowBtn(),
           verticalDiv(40),
           const ColBtn(),

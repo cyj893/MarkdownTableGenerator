@@ -56,7 +56,7 @@ class TableManagerState extends State<TableManager> {
   void insertRow(int location){
     List<int> list = findFocusedCell();
     if( list.isEmpty ){
-      debugPrint("Error");
+      debugPrint("Error insertRow");
       return ;
     }
 
@@ -86,7 +86,7 @@ class TableManagerState extends State<TableManager> {
   void deleteRow(){
     List<int> list = findFocusedCell();
     if( list.isEmpty ){
-      debugPrint("Error");
+      debugPrint("Error deleteRow");
       return ;
     }
 
@@ -102,7 +102,7 @@ class TableManagerState extends State<TableManager> {
   void insertColumn(int location){
     List<int> list = findFocusedCell();
     if( list.isEmpty ){
-      debugPrint("Error");
+      debugPrint("Error insertColumn");
       return ;
     }
 
@@ -123,7 +123,7 @@ class TableManagerState extends State<TableManager> {
   void deleteColumn(){
     List<int> list = findFocusedCell();
     if( list.isEmpty ){
-      debugPrint("Error");
+      debugPrint("Error deleteColumn");
       return ;
     }
 
@@ -151,7 +151,7 @@ class TableManagerState extends State<TableManager> {
   void setFocusedColor(){
     List<int> list = findFocusedCell();
     if( list.isEmpty ){
-      debugPrint("Error");
+      debugPrint("Error setFocusedColor");
       return ;
     }
     for(int i = 0; i < keyTable.length; i++){
@@ -166,7 +166,7 @@ class TableManagerState extends State<TableManager> {
   void setAlignment(int alignment){
     List<int> list = findFocusedCell();
     if( list.isEmpty ){
-      debugPrint("Error");
+      debugPrint("Error setAlignment");
       return ;
     }
     for(int i = 0; i < keyTable.length; i++){
@@ -177,7 +177,7 @@ class TableManagerState extends State<TableManager> {
   void changeCellBold() {
     List<int> list = findFocusedCell();
     if( list.isEmpty ){
-      debugPrint("Error");
+      debugPrint("Error changeCellBold");
       return ;
     }
     keyTable[list[0]][list[1]].currentState?.changeBold();
@@ -186,7 +186,7 @@ class TableManagerState extends State<TableManager> {
   void changeCellItalic() {
     List<int> list = findFocusedCell();
     if( list.isEmpty ){
-      debugPrint("Error");
+      debugPrint("Error changeCellItalic");
       return ;
     }
     keyTable[list[0]][list[1]].currentState?.changeItalic();
@@ -195,7 +195,7 @@ class TableManagerState extends State<TableManager> {
   void changeCellStrike() {
     List<int> list = findFocusedCell();
     if( list.isEmpty ){
-      debugPrint("Error");
+      debugPrint("Error changeCellStrike");
       return ;
     }
     keyTable[list[0]][list[1]].currentState?.changeStrike();
@@ -204,10 +204,19 @@ class TableManagerState extends State<TableManager> {
   void changeCellCode() {
     List<int> list = findFocusedCell();
     if( list.isEmpty ){
-      debugPrint("Error");
+      debugPrint("Error changeCellCode");
       return ;
     }
     keyTable[list[0]][list[1]].currentState?.changeCode();
+  }
+
+  void clearCellDeco() {
+    List<int> list = findFocusedCell();
+    if( list.isEmpty ){
+      debugPrint("Error deleteAllDeco");
+      return ;
+    }
+    keyTable[list[0]][list[1]].currentState?.clearDeco();
   }
 
   String makeMdData(){
