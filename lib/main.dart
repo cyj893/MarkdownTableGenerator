@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
+import 'package:markdown_table_generator/show_res.dart';
 import 'package:markdown_table_generator/table_menu.dart';
 import 'package:markdown_table_generator/width_provider.dart';
 import 'package:provider/provider.dart';
 
+import 'my_div.dart';
 import 'table_helper.dart';
 
 void main() {
@@ -43,35 +44,11 @@ class MyHomePage extends StatefulWidget {
 class _MyHomePageState extends State<MyHomePage> {
 
   TableHelper tableHelper = TableHelper();
-  String mdData = "";
 
   @override
   void initState() {
     super.initState();
 
-    mdData = '''
-| 	 | 	 | 	 |
-| :--: | :--: | :--: |
-| 	 | 	 | 	 |
-| 	 | 	 | 	 |
-    ''';
-  }
-
-  Widget makeCode(){
-    return Container(
-      padding: const EdgeInsets.all(10),
-      decoration: BoxDecoration(
-        border: Border.all(color: Colors.grey),
-        borderRadius: const BorderRadius.all(Radius.circular(20)),
-        color: Colors.grey[50],
-      ),
-      child: Row(
-        children: [
-          SelectableText(mdData, style: const TextStyle(fontFamily: "D2Coding"),),
-          Expanded(child: Container()),
-        ],
-      ),
-    );
   }
 
   @override
@@ -88,29 +65,11 @@ class _MyHomePageState extends State<MyHomePage> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: <Widget>[
               const TableMenu(),
-              tableHelper.tableManager!,
-              const SizedBox(height: 20,),
-              Row(
-                children: [
-                  const Text("Result", style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),),
-                  IconButton(
-                      onPressed: () {
-                        setState(() {
-                          mdData = tableHelper.makeMdData();
-                        });
-                      },
-                      icon: const Icon(Icons.refresh_rounded)),
-                  IconButton(
-                      onPressed: () {
-                        debugPrint("copied");
-                        debugPrint(mdData);
-                        Clipboard.setData(ClipboardData(text: mdData));
-                      },
-                      icon: const Icon(Icons.file_copy_rounded)),
-                ],
-              ),
+              horizontalDiv(MediaQuery.of(context).size.width),
               const SizedBox(height: 10,),
-              makeCode(),
+              tableHelper.tableManager!,
+              const SizedBox(height: 10,),
+              const ShowRes(),
             ],
           ),
         ),
