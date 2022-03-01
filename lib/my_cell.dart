@@ -25,6 +25,7 @@ class MyCell extends StatefulWidget {
 class MyCellState extends State<MyCell> {
 
   double _width = 100.0;
+  double _beforeTextwidth = 0.0;
   final TextEditingController _controller = TextEditingController();
   final FocusNode _focusNode = FocusNode();
   int cellKey = -1;
@@ -116,7 +117,10 @@ class MyCellState extends State<MyCell> {
         controller: _controller,
         focusNode: _focusNode,
         onChanged: (string) {
+          double nowTextWidth = getWidth()+30;
+          if( _beforeTextwidth <= 100 && nowTextWidth <= 100 ) return ;
           print(string);
+          _beforeTextwidth = nowTextWidth;
           context.read<WidthProvider>().changeWidth(getWidth()+30);
         },
         textAlign: _alignments[_alignment],
