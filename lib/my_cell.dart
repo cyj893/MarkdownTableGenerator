@@ -34,7 +34,7 @@ class MyCellState extends State<MyCell> {
   int _fontStyle = 0;
   int _strike = 0;
   int _codeColor = 0;
-  final List<Color> _focusedColors = [Colors.white, Colors.grey[200]!, Colors.grey[400]!];
+  final List<Color> _focusedColors = [Colors.white, Colors.blue[50]!.withOpacity(0.3), Colors.blue[50]!];
   final List<TextAlign> _alignments = [TextAlign.left, TextAlign.center, TextAlign.right];
   final List<FontWeight> _fontWeights = [FontWeight.normal, FontWeight.bold];
   final List<FontStyle> _fontStyles = [FontStyle.normal, FontStyle.italic];
