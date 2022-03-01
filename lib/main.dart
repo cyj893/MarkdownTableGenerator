@@ -4,7 +4,7 @@ import 'package:markdown_table_generator/table_menu.dart';
 import 'package:markdown_table_generator/width_provider.dart';
 import 'package:provider/provider.dart';
 
-import 'table_manager.dart';
+import 'table_helper.dart';
 
 void main() {
   runApp(
@@ -42,16 +42,13 @@ class MyHomePage extends StatefulWidget {
 
 class _MyHomePageState extends State<MyHomePage> {
 
+  TableHelper tableHelper = TableHelper();
   String mdData = "";
-
-  TableManager? tableManager;
-  GlobalKey<TableManagerState> tableKey = GlobalKey();
 
   @override
   void initState() {
     super.initState();
 
-    tableManager = TableManager(key: tableKey);
     mdData = '''
 | 	 | 	 | 	 |
 | :--: | :--: | :--: |
@@ -90,8 +87,8 @@ class _MyHomePageState extends State<MyHomePage> {
             mainAxisAlignment: MainAxisAlignment.start,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: <Widget>[
-              TableMenu(tableKey: tableKey,),
-              tableManager!,
+              const TableMenu(),
+              tableHelper.tableManager!,
               const SizedBox(height: 20,),
               Row(
                 children: [
@@ -99,7 +96,7 @@ class _MyHomePageState extends State<MyHomePage> {
                   IconButton(
                       onPressed: () {
                         setState(() {
-                          mdData = tableKey.currentState?.makeMdData() ?? "";
+                          mdData = tableHelper.makeMdData();
                         });
                       },
                       icon: const Icon(Icons.refresh_rounded)),

@@ -1,14 +1,11 @@
 import 'package:flutter/material.dart';
 
-import 'table_manager.dart';
+import 'table_helper.dart';
 
 class TableMenu extends StatefulWidget {
 
-  final GlobalKey<TableManagerState> tableKey;
-
   const TableMenu({
     Key? key,
-    required this.tableKey,
   }) : super(key: key);
 
   @override
@@ -20,13 +17,13 @@ class TableMenuState extends State<TableMenu> {
 
   bool isRowSelected = false;
   bool isColSelected = false;
-  GlobalKey<TableManagerState> tableKey = GlobalKey();
 
+  TableHelper tableHelper = TableHelper();
+  
   @override
   void initState(){
     super.initState();
 
-    tableKey = widget.tableKey;
   }
 
   Widget myDiv(double height) => Container(height: height, width: 1, color: Colors.grey[300]);
@@ -55,7 +52,7 @@ class TableMenuState extends State<TableMenu> {
               myDiv(10),
               InkWell(
                 onTap: () {
-                  tableKey.currentState!.insertRow(0);
+                  tableHelper.insertRow(0);
                 },
                 child: SizedBox(
                   width: 50,
@@ -82,7 +79,7 @@ class TableMenuState extends State<TableMenu> {
               myDiv(10),
               InkWell(
                 onTap: () {
-                  tableKey.currentState!.insertRow(1);
+                  tableHelper.insertRow(1);
                 },
                 child: SizedBox(
                   width: 50,
@@ -111,7 +108,7 @@ class TableMenuState extends State<TableMenu> {
                 width: 50,
                 child: IconButton(
                     onPressed: () {
-                      tableKey.currentState!.deleteRow();
+                      tableHelper.deleteRow();
                     },
                     icon: const Icon(Icons.indeterminate_check_box_rounded)
                 ),
@@ -147,7 +144,7 @@ class TableMenuState extends State<TableMenu> {
               InkWell(
                 onTap: () {
                   setState(() {
-                    tableKey.currentState!.insertColumn(0);
+                    tableHelper.insertColumn(0);
                   });
                 },
                 child: SizedBox(
@@ -176,7 +173,7 @@ class TableMenuState extends State<TableMenu> {
               InkWell(
                 onTap: () {
                   setState(() {
-                    tableKey.currentState!.insertColumn(1);
+                    tableHelper.insertColumn(1);
                   });
                 },
                 child: SizedBox(
@@ -206,7 +203,7 @@ class TableMenuState extends State<TableMenu> {
                 width: 50,
                 child: IconButton(
                     onPressed: () {
-                      tableKey.currentState!.deleteColumn();
+                      tableHelper.deleteColumn();
                     },
                     icon: const Icon(Icons.indeterminate_check_box_rounded)
                 ),
@@ -219,7 +216,7 @@ class TableMenuState extends State<TableMenu> {
 
   Widget makeAlignBtn(int alignment, Icon icon){
     return IconButton(
-        onPressed: () { tableKey.currentState!.setAlignment(alignment); },
+        onPressed: () { tableHelper.setAlignment(alignment); },
         icon: icon
     );
   }
@@ -238,16 +235,16 @@ class TableMenuState extends State<TableMenu> {
           makeAlignBtn(2, const Icon(Icons.format_align_right_rounded)),
           myDiv(40),
           IconButton(
-              onPressed: () { tableKey.currentState!.changeCellBold(); },
+              onPressed: () { tableHelper.changeCellBold(); },
               icon: const Icon(Icons.format_bold_rounded)),
           IconButton(
-              onPressed: () { tableKey.currentState!.changeCellItalic(); },
+              onPressed: () { tableHelper.changeCellItalic(); },
               icon: const Icon(Icons.format_italic_rounded)),
           IconButton(
-              onPressed: () { tableKey.currentState!.changeCellStrike(); },
+              onPressed: () { tableHelper.changeCellStrike(); },
               icon: const Icon(Icons.strikethrough_s_rounded)),
           IconButton(
-              onPressed: () { tableKey.currentState!.changeCellCode(); },
+              onPressed: () { tableHelper.changeCellCode(); },
               icon: const Icon(Icons.code_rounded)),
         ],
       ),
