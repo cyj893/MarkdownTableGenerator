@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'dart:math';
-import 'package:provider/src/provider.dart';
+import 'package:provider/provider.dart';
 
 import 'width_provider.dart';
 import 'focused_cell.dart';
@@ -96,6 +96,8 @@ class TableManagerState extends State<TableManager> {
       cellTable.removeAt(list[0]);
       printKeyTable();
       rowLen--;
+
+      resizeTable(list[1]);
     });
   }
 
@@ -251,20 +253,24 @@ class TableManagerState extends State<TableManager> {
     return mdData;
   }
 
+  void resizeTable(int colNum){
+    List<List> list = List.generate(keyTable.length, (i) => [keyTable[i][colNum].currentState!.getWidth()+30, i]);
+    list.sort((a, b) {
+      if( a[0] >= b[0] ) return -1;
+      return 1;
+    });
+    double maxWidth = max<double>(list[0][0], 100.0);
+    for(int i = 0; i < keyTable.length; i++){
+      keyTable[i][colNum].currentState?.setWidth(maxWidth);
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     widthProvider = context.watch<WidthProvider>().isChanged;
     if( widthProvider ){
       List indexes = findFocusedCell();
-      List<List> list = List.generate(keyTable.length, (i) => [keyTable[i][indexes[1]].currentState!.getWidth()+30, i]);
-      list.sort((a, b) {
-        if( a[0] >= b[0] ) return -1;
-        return 1;
-      });
-      double maxWidth = max<double>(list[0][0], 100.0);
-      for(int i = 0; i < keyTable.length; i++){
-        keyTable[i][indexes[1]].currentState?.setWidth(maxWidth);
-      }
+      resizeTable(indexes[1]);
       context.read<WidthProvider>().endChanging();
     }
     return Column(
