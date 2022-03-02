@@ -121,7 +121,7 @@ class MyCellState extends State<MyCell> {
           if( _beforeTextwidth <= 100 && nowTextWidth <= 100 ) return ;
           print(string);
           _beforeTextwidth = nowTextWidth;
-          context.read<WidthProvider>().changeWidth(getWidth()+30);
+          context.read<WidthProvider>().changeWidth();
         },
         textAlign: _alignments[_alignment],
         style: TextStyle(

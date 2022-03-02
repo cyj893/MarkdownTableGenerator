@@ -7,7 +7,7 @@ class WidthProvider with ChangeNotifier {
     isChanged = false;
   }
 
-  void changeWidth(double width){
+  void changeWidth(){
     isChanged = true;
     notifyListeners();
   }
