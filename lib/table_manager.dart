@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'dart:math';
 import 'package:provider/provider.dart';
 
-import 'width_provider.dart';
+import 'cell_size_provider.dart';
 import 'focused_cell.dart';
 import 'my_cell.dart';
 
@@ -20,6 +20,7 @@ class TableManager extends StatefulWidget {
 class TableManagerState extends State<TableManager> {
 
   bool widthProvider = false;
+  bool heightProvider = false;
 
   int rowLen = 3;
   int colLen = 3;
@@ -62,9 +63,9 @@ class TableManagerState extends State<TableManager> {
 
     List<double> maxList = [];
     for(int i = 0; i < colLen; i++){
-      double maxWidth = 100.0;
+      double maxWidth = 120.0;
       for(int j = 0; j < rowLen; j++){
-        maxWidth = max<double>(maxWidth, keyTable[j][i].currentState!.getWidth()+30);
+        maxWidth = max<double>(maxWidth, keyTable[j][i].currentState!.getSize().width+50);
       }
       maxList.add(maxWidth);
     }
@@ -97,7 +98,9 @@ class TableManagerState extends State<TableManager> {
       printKeyTable();
       rowLen--;
 
-      resizeTable(list[1]);
+      for(int i = 0; i < colLen; i++){
+        resizeTableWidth(i);
+      }
     });
   }
 
@@ -108,12 +111,21 @@ class TableManagerState extends State<TableManager> {
       return ;
     }
 
+    List<double> maxList = [];
+    for(int i = 0; i < rowLen; i++){
+      double maxHeight = 72.0;
+      for(int j = 0; j < colLen; j++){
+        maxHeight = max<double>(maxHeight, keyTable[i][j].currentState!.getHeight());
+      }
+      maxList.add(maxHeight);
+    }
     setState(() {
       for(int i = 0; i < rowLen; i++){
         keyTable[i].insert(list[1]+location, GlobalKey());
         cellTable[i].insert(list[1]+location, MyCell(
             key: keyTable[i][list[1]+location],
             function: setFocusedColor,
+            initialHeight: maxList[i],
             initialFocused: i == list[0] ? 1 : 0,
         ));
       }
@@ -137,6 +149,10 @@ class TableManagerState extends State<TableManager> {
       }
       printKeyTable();
       colLen--;
+
+      for(int i = 0; i < rowLen; i++){
+        resizeTableHeight(i);
+      }
     });
   }
 
@@ -158,9 +174,15 @@ class TableManagerState extends State<TableManager> {
     }
     for(int i = 0; i < keyTable.length; i++){
       for(int j = 0; j < keyTable[i].length; j++){
-        if( i == list[0] && j == list[1] ) keyTable[i][j].currentState?.setFocusedColor(2);
-        else if( i == list[0] || j == list[1] ) keyTable[i][j].currentState?.setFocusedColor(1);
-        else keyTable[i][j].currentState?.setFocusedColor(0);
+        if( i == list[0] && j == list[1] ){
+          keyTable[i][j].currentState?.setFocusedColor(2);
+        }
+        else if( i == list[0] || j == list[1] ){
+          keyTable[i][j].currentState?.setFocusedColor(1);
+        }
+        else{
+          keyTable[i][j].currentState?.setFocusedColor(0);
+        }
       }
     }
   }
@@ -215,10 +237,19 @@ class TableManagerState extends State<TableManager> {
   void clearCellDeco() {
     List<int> list = findFocusedCell();
     if( list.isEmpty ){
-      debugPrint("Error deleteAllDeco");
+      debugPrint("Error clearCellDeco");
       return ;
     }
     keyTable[list[0]][list[1]].currentState?.clearDeco();
+  }
+
+  void changeListing(int listing) {
+    List<int> list = findFocusedCell();
+    if( list.isEmpty ){
+      debugPrint("Error changeListing");
+      return ;
+    }
+    keyTable[list[0]][list[1]].currentState?.changeListing(listing);
   }
 
   String makeMdData(){
@@ -253,25 +284,43 @@ class TableManagerState extends State<TableManager> {
     return mdData;
   }
 
-  void resizeTable(int colNum){
-    List<List> list = List.generate(keyTable.length, (i) => [keyTable[i][colNum].currentState!.getWidth()+30, i]);
+  void resizeTableWidth(int colNum){
+    List<List> list = List.generate(rowLen, (i) => [keyTable[i][colNum].currentState!.getSize().width+50, i]);
     list.sort((a, b) {
       if( a[0] >= b[0] ) return -1;
       return 1;
     });
-    double maxWidth = max<double>(list[0][0], 100.0);
-    for(int i = 0; i < keyTable.length; i++){
+    double maxWidth = max<double>(list[0][0], 120.0);
+    for(int i = 0; i < rowLen; i++){
       keyTable[i][colNum].currentState?.setWidth(maxWidth);
+    }
+  }
+
+  void resizeTableHeight(int rowNum){
+    List<List> list = List.generate(colLen, (i) => [keyTable[rowNum][i].currentState!.getHeight(), i]);
+    list.sort((a, b) {
+      if( a[0] >= b[0] ) return -1;
+      return 1;
+    });
+    double maxHeight = max<double>(list[0][0], 72.0);
+    for(int i = 0; i < colLen; i++){
+      keyTable[rowNum][i].currentState?.setHeight(maxHeight);
     }
   }
 
   @override
   Widget build(BuildContext context) {
-    widthProvider = context.watch<WidthProvider>().isChanged;
+    widthProvider = context.watch<CellSizeProvider>().isWidthChanged;
+    heightProvider = context.watch<CellSizeProvider>().isHeightChanged;
     if( widthProvider ){
       List indexes = findFocusedCell();
-      resizeTable(indexes[1]);
-      context.read<WidthProvider>().endChanging();
+      resizeTableWidth(indexes[1]);
+      context.read<CellSizeProvider>().endWidthChanging();
+    }
+    if( heightProvider ){
+      List indexes = findFocusedCell();
+      resizeTableHeight(indexes[0]);
+      context.read<CellSizeProvider>().endHeightChanging();
     }
     return Column(
       children: List.generate(

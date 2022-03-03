@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:markdown_table_generator/menus/listing_btn.dart';
 
 import 'my_div.dart';
 import 'menus/row_btn.dart';
@@ -26,6 +27,8 @@ class TableMenu extends StatelessWidget {
           AlignBtn(),
           verticalDiv(40),
           TextDecoBtn(),
+          verticalDiv(40),
+          ListingBtn(),
           verticalDiv(40),
         ],
       ),

@@ -25,6 +25,7 @@ class TableHelper {
   void changeCellStrike() => tableKey.currentState!.changeCellStrike();
   void changeCellCode() => tableKey.currentState!.changeCellCode();
   void clearCellDeco() => tableKey.currentState!.clearCellDeco();
+  void changeListing(int listing) => tableKey.currentState!.changeListing(listing);
 
   String makeMdData() => tableKey.currentState?.makeMdData() ?? "";
 
