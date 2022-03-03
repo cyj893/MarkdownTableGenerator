@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:markdown_table_generator/width_provider.dart';
+import 'package:markdown_table_generator/cell_size_provider.dart';
 import 'package:provider/src/provider.dart';
 import 'focused_cell.dart';
 import 'cell_key_generator.dart';
@@ -7,12 +7,14 @@ import 'cell_key_generator.dart';
 class MyCell extends StatefulWidget {
 
   final double initialWidth;
+  final double initialHeight;
   final int initialFocused;
   final Function function;
 
   const MyCell({
     Key? key,
     this.initialWidth = 100,
+    this.initialHeight = 72,
     this.initialFocused = 0,
     required this.function,
   }) : super(key: key);
@@ -25,7 +27,10 @@ class MyCell extends StatefulWidget {
 class MyCellState extends State<MyCell> {
 
   double _width = 100.0;
-  double _beforeTextwidth = 0.0;
+  double _height = 72.0;
+  double _beforeTextWidth = 0.0;
+  double _textHeight = 0.0;
+  int linesNum = 1;
   final TextEditingController _controller = TextEditingController();
   final FocusNode _focusNode = FocusNode();
   int cellKey = -1;
@@ -48,6 +53,7 @@ class MyCellState extends State<MyCell> {
 
     cellKey = CellKeyGenerator().generateKey();
     _width = widget.initialWidth;
+    _height = widget.initialHeight;
     _focused = widget.initialFocused;
     _focusNode.addListener(() {
       if( _focusNode.hasFocus ){
@@ -56,6 +62,7 @@ class MyCellState extends State<MyCell> {
         widget.function();
       }
     });
+
   }
 
   Size getTextSize(String text, TextStyle textStyle){
@@ -69,17 +76,23 @@ class MyCellState extends State<MyCell> {
   }
 
   void setWidth(double width) => setState(() { _width = width; });
-  double getWidth() => getTextSize(_controller.text, TextStyle(
+  void setHeight(double height) => setState(() { _height = height; });
+
+  Size getSize() => getTextSize(_controller.text, TextStyle(
     fontSize: 16,
     fontWeight: _fontWeights[_fontWeight],
     fontStyle: _fontStyles[_fontStyle],
     decoration: _textDecorations[_strike],
     backgroundColor: _colors[_codeColor],
-  )).width;
+  ));
+
+  double getHeight() => _textHeight * linesNum + 50;
+
   String getText() => _controller.text;
 
   String getMDText(){
-    String ret = _controller.text;
+    String ret = _controller.text.replaceAll('\n', "<br>");
+
     if( ret == "" ) return ret;
     if( _codeColor == 1 ) ret = "`$ret`";
     if( _fontWeight == 1 ) ret = "**$ret**";
@@ -106,6 +119,7 @@ class MyCellState extends State<MyCell> {
 
   @override
   Widget build(BuildContext context) {
+    _textHeight = getSize().height;
     return Container(
       decoration: BoxDecoration(
         color: _focusedColors[_focused],
@@ -113,15 +127,29 @@ class MyCellState extends State<MyCell> {
       ),
       padding: const EdgeInsets.all(10),
       width: _width,
+      height: _height,
+      alignment: Alignment.center,
       child: TextField(
+        keyboardType: TextInputType.multiline,
+        maxLines: null,
         controller: _controller,
         focusNode: _focusNode,
         onChanged: (string) {
-          double nowTextWidth = getWidth()+30;
-          if( _beforeTextwidth <= 100 && nowTextWidth <= 100 ) return ;
-          print(string);
-          _beforeTextwidth = nowTextWidth;
-          context.read<WidthProvider>().changeWidth();
+          print("string: $string");
+          int nowLinesNum = '\n'.allMatches(string).length + 1;
+          if( nowLinesNum > linesNum ){
+            linesNum = nowLinesNum;
+            context.read<CellSizeProvider>().changeHeight();
+          }
+          else if( nowLinesNum < linesNum ){
+            linesNum = nowLinesNum;
+            context.read<CellSizeProvider>().changeHeight();
+          }
+          double nowTextWidth = getSize().width+30;
+          if( _beforeTextWidth <= 100 && nowTextWidth <= 100 ) return ;
+          if( _beforeTextWidth == nowTextWidth ) return ;
+          _beforeTextWidth = nowTextWidth;
+          context.read<CellSizeProvider>().changeWidth();
         },
         textAlign: _alignments[_alignment],
         style: TextStyle(
