@@ -2,41 +2,30 @@ import 'package:flutter/material.dart';
 
 import '../table_helper.dart';
 
-class ListingBtn extends StatefulWidget {
+class ListingBtn extends StatelessWidget {
 
-  const ListingBtn({
+  ListingBtn({
     Key? key,
   }) : super(key: key);
 
-  @override
-  ListingBtnState createState() => ListingBtnState();
-
-}
-
-class ListingBtnState extends State<ListingBtn> {
-
-  int listing = 0;
-  final List<Icon> icons = const [Icon(Icons.dehaze_rounded), Icon(Icons.format_list_bulleted_rounded), Icon(Icons.format_list_numbered_rounded)];
-
   TableHelper tableHelper = TableHelper();
 
-  @override
-  void initState(){
-    super.initState();
-
+  Widget makeListingBtn(int listing, String listingString, Icon icon){
+    return IconButton(
+        tooltip: listingString,
+        onPressed: () { tableHelper.changeListing(listing); },
+        icon: icon
+    );
   }
 
   @override
   Widget build(BuildContext context) {
-    return IconButton(
-        tooltip: "listing",
-        onPressed: () {
-          setState(() {
-            listing = (listing+1) % 3;
-            tableHelper.changeListing(listing);
-          });
-        },
-        icon: icons[listing]
+    return Row(
+      children: [
+        makeListingBtn(0, "no listing", const Icon(Icons.notes_rounded)),
+        makeListingBtn(1, "unordered listing", const Icon(Icons.format_list_bulleted_rounded)),
+        makeListingBtn(2, "ordered listing", const Icon(Icons.format_list_numbered_rounded)),
+      ],
     );
   }
 
