@@ -8,7 +8,7 @@ class ListingBtn extends StatelessWidget {
     Key? key,
   }) : super(key: key);
 
-  TableHelper tableHelper = TableHelper();
+  final TableHelper tableHelper = TableHelper();
 
   Widget makeListingBtn(int listing, String listingString, Icon icon){
     return IconButton(

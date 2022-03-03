@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:markdown_table_generator/cell_size_provider.dart';
-import 'package:provider/src/provider.dart';
+import 'package:provider/provider.dart';
 import 'focused_cell.dart';
 import 'cell_key_generator.dart';
 
@@ -67,6 +67,11 @@ class MyCellState extends State<MyCell> {
 
   }
 
+  void setWidth(double width) => setState(() { _width = width; });
+  void setHeight(double height) => setState(() { _height = height; });
+
+  int getKeyNum() => cellKey;
+
   Size getTextSize(String text, TextStyle textStyle){
     return (TextPainter(
         text: TextSpan(text: text, style: textStyle),
@@ -76,9 +81,6 @@ class MyCellState extends State<MyCell> {
       ..layout())
         .size;
   }
-
-  void setWidth(double width) => setState(() { _width = width; });
-  void setHeight(double height) => setState(() { _height = height; });
 
   Size getSize() => getTextSize(_controller.text, TextStyle(
     fontSize: 16,
@@ -106,9 +108,9 @@ class MyCellState extends State<MyCell> {
     String ret = _listing == 1 ? "<ul>" : "<ol>";
     List<String> list = _controller.text.split('\n');
     for(int i = 0; i < list.length; i++){
-      ret += "<li>${list[i]}<\/li>";
+      ret += "<li>${list[i]}</li>";
     }
-    ret += _listing == 1 ? "<\/ul>" : "<\/ol>";
+    ret += _listing == 1 ? "</ul>" : "</ol>";
     return ret;
   }
 
@@ -179,7 +181,7 @@ class MyCellState extends State<MyCell> {
               controller: _controller,
               focusNode: _focusNode,
               onChanged: (string) {
-                print("string: $string");
+                debugPrint("string: $string");
                 int nowLinesNum = '\n'.allMatches(string).length + 1;
                 if( nowLinesNum > linesNum ){
                   linesNum = nowLinesNum;

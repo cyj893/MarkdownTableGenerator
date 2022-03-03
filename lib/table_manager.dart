@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'dart:math';
 import 'package:provider/provider.dart';
 
+import 'cell_helper.dart';
 import 'cell_size_provider.dart';
 import 'focused_cell.dart';
 import 'my_cell.dart';
@@ -45,7 +46,7 @@ class TableManagerState extends State<TableManager> {
     int focusKey = FocusedCell().getKey();
     for(int i = 0; i < keyTable.length; i++){
       for(int j = 0; j < keyTable[i].length; j++){
-        if( keyTable[i][j].currentState?.cellKey == focusKey ){
+        if( CellHelper.getKeyNum(keyTable[i][j]) == focusKey ){
           ret = [i, j];
           break;
         }
@@ -65,7 +66,7 @@ class TableManagerState extends State<TableManager> {
     for(int i = 0; i < colLen; i++){
       double maxWidth = 120.0;
       for(int j = 0; j < rowLen; j++){
-        maxWidth = max<double>(maxWidth, keyTable[j][i].currentState!.getSize().width+50);
+        maxWidth = max<double>(maxWidth, CellHelper.getWidth(keyTable[j][i]) + 50);
       }
       maxList.add(maxWidth);
     }
@@ -115,7 +116,7 @@ class TableManagerState extends State<TableManager> {
     for(int i = 0; i < rowLen; i++){
       double maxHeight = 72.0;
       for(int j = 0; j < colLen; j++){
-        maxHeight = max<double>(maxHeight, keyTable[i][j].currentState!.getHeight());
+        maxHeight = max<double>(maxHeight, CellHelper.getHeight(keyTable[i][j]));
       }
       maxList.add(maxHeight);
     }
@@ -160,7 +161,7 @@ class TableManagerState extends State<TableManager> {
     print("");
     for(int i = 0; i < keyTable.length; i++){
       for(int j = 0; j < keyTable[i].length; j++){
-        print("${keyTable[i][j].currentState?.cellKey} ");
+        print("${CellHelper.getKeyNum(keyTable[i][j])} ");
       }
     }
     print("");
@@ -175,13 +176,13 @@ class TableManagerState extends State<TableManager> {
     for(int i = 0; i < keyTable.length; i++){
       for(int j = 0; j < keyTable[i].length; j++){
         if( i == list[0] && j == list[1] ){
-          keyTable[i][j].currentState?.setFocusedColor(2);
+          CellHelper.setFocusedColor(keyTable[i][j], 2);
         }
         else if( i == list[0] || j == list[1] ){
-          keyTable[i][j].currentState?.setFocusedColor(1);
+          CellHelper.setFocusedColor(keyTable[i][j], 1);
         }
         else{
-          keyTable[i][j].currentState?.setFocusedColor(0);
+          CellHelper.setFocusedColor(keyTable[i][j], 0);
         }
       }
     }
@@ -194,7 +195,7 @@ class TableManagerState extends State<TableManager> {
       return ;
     }
     for(int i = 0; i < keyTable.length; i++){
-      keyTable[i][list[1]].currentState?.changeAlignment(alignment);
+      CellHelper.changeAlignment(keyTable[i][list[1]], alignment);
     }
   }
 
@@ -204,7 +205,7 @@ class TableManagerState extends State<TableManager> {
       debugPrint("Error changeCellBold");
       return ;
     }
-    keyTable[list[0]][list[1]].currentState?.changeBold();
+    CellHelper.changeBold(keyTable[list[0]][list[1]]);
   }
 
   void changeCellItalic() {
@@ -213,7 +214,7 @@ class TableManagerState extends State<TableManager> {
       debugPrint("Error changeCellItalic");
       return ;
     }
-    keyTable[list[0]][list[1]].currentState?.changeItalic();
+    CellHelper.changeItalic(keyTable[list[0]][list[1]]);
   }
 
   void changeCellStrike() {
@@ -222,7 +223,7 @@ class TableManagerState extends State<TableManager> {
       debugPrint("Error changeCellStrike");
       return ;
     }
-    keyTable[list[0]][list[1]].currentState?.changeStrike();
+    CellHelper.changeStrike(keyTable[list[0]][list[1]]);
   }
 
   void changeCellCode() {
@@ -231,7 +232,7 @@ class TableManagerState extends State<TableManager> {
       debugPrint("Error changeCellCode");
       return ;
     }
-    keyTable[list[0]][list[1]].currentState?.changeCode();
+    CellHelper.changeCode(keyTable[list[0]][list[1]]);
   }
 
   void clearCellDeco() {
@@ -240,7 +241,7 @@ class TableManagerState extends State<TableManager> {
       debugPrint("Error clearCellDeco");
       return ;
     }
-    keyTable[list[0]][list[1]].currentState?.clearDeco();
+    CellHelper.clearDeco(keyTable[list[0]][list[1]]);
   }
 
   void changeListing(int listing) {
@@ -249,7 +250,7 @@ class TableManagerState extends State<TableManager> {
       debugPrint("Error changeListing");
       return ;
     }
-    keyTable[list[0]][list[1]].currentState?.changeListing(listing);
+    CellHelper.changeListing(keyTable[list[0]][list[1]], listing);
   }
 
   String makeMdData(){
@@ -257,13 +258,13 @@ class TableManagerState extends State<TableManager> {
     for(int i = 0; i < keyTable.length; i++){
       mdData += "|";
       for(int j = 0; j < keyTable[i].length; j++){
-        mdData += " ${keyTable[i][j].currentState?.getMDText() ?? ""}\t |";
+        mdData += " ${CellHelper.getMDText(keyTable[i][j])}\t |";
       }
       mdData += "\n";
       if( i == 0 ){
         mdData += "|";
         for(int j = 0; j < keyTable[i].length; j++){
-          int alignment = keyTable[i][j].currentState?.getAlignment() ?? 1;
+          int alignment = CellHelper.getAlignment(keyTable[i][j]);
           switch( alignment ){
             case 0:
               mdData += " :-- |";
@@ -285,26 +286,26 @@ class TableManagerState extends State<TableManager> {
   }
 
   void resizeTableWidth(int colNum){
-    List<List> list = List.generate(rowLen, (i) => [keyTable[i][colNum].currentState!.getSize().width+50, i]);
+    List<List> list = List.generate(rowLen, (i) => [CellHelper.getWidth(keyTable[i][colNum])+50, i]);
     list.sort((a, b) {
       if( a[0] >= b[0] ) return -1;
       return 1;
     });
     double maxWidth = max<double>(list[0][0], 120.0);
     for(int i = 0; i < rowLen; i++){
-      keyTable[i][colNum].currentState?.setWidth(maxWidth);
+      CellHelper.setWidth(keyTable[i][colNum], maxWidth);
     }
   }
 
   void resizeTableHeight(int rowNum){
-    List<List> list = List.generate(colLen, (i) => [keyTable[rowNum][i].currentState!.getHeight(), i]);
+    List<List> list = List.generate(colLen, (i) => [CellHelper.getHeight(keyTable[rowNum][i]), i]);
     list.sort((a, b) {
       if( a[0] >= b[0] ) return -1;
       return 1;
     });
     double maxHeight = max<double>(list[0][0], 72.0);
     for(int i = 0; i < colLen; i++){
-      keyTable[rowNum][i].currentState?.setHeight(maxHeight);
+      CellHelper.setHeight(keyTable[rowNum][i], maxHeight);
     }
   }
 
