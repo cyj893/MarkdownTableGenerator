@@ -63,9 +63,9 @@ class TableManagerState extends State<TableManager> {
 
     List<double> maxList = [];
     for(int i = 0; i < colLen; i++){
-      double maxWidth = 100.0;
+      double maxWidth = 120.0;
       for(int j = 0; j < rowLen; j++){
-        maxWidth = max<double>(maxWidth, keyTable[j][i].currentState!.getSize().width+30);
+        maxWidth = max<double>(maxWidth, keyTable[j][i].currentState!.getSize().width+50);
       }
       maxList.add(maxWidth);
     }
@@ -237,10 +237,19 @@ class TableManagerState extends State<TableManager> {
   void clearCellDeco() {
     List<int> list = findFocusedCell();
     if( list.isEmpty ){
-      debugPrint("Error deleteAllDeco");
+      debugPrint("Error clearCellDeco");
       return ;
     }
     keyTable[list[0]][list[1]].currentState?.clearDeco();
+  }
+
+  void changeListing(int listing) {
+    List<int> list = findFocusedCell();
+    if( list.isEmpty ){
+      debugPrint("Error changeListing");
+      return ;
+    }
+    keyTable[list[0]][list[1]].currentState?.changeListing(listing);
   }
 
   String makeMdData(){
@@ -276,12 +285,12 @@ class TableManagerState extends State<TableManager> {
   }
 
   void resizeTableWidth(int colNum){
-    List<List> list = List.generate(rowLen, (i) => [keyTable[i][colNum].currentState!.getSize().width+30, i]);
+    List<List> list = List.generate(rowLen, (i) => [keyTable[i][colNum].currentState!.getSize().width+50, i]);
     list.sort((a, b) {
       if( a[0] >= b[0] ) return -1;
       return 1;
     });
-    double maxWidth = max<double>(list[0][0], 100.0);
+    double maxWidth = max<double>(list[0][0], 120.0);
     for(int i = 0; i < rowLen; i++){
       keyTable[i][colNum].currentState?.setWidth(maxWidth);
     }

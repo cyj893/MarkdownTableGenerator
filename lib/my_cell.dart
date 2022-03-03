@@ -13,8 +13,8 @@ class MyCell extends StatefulWidget {
 
   const MyCell({
     Key? key,
-    this.initialWidth = 100,
-    this.initialHeight = 72,
+    this.initialWidth = 120.0,
+    this.initialHeight = 72.0,
     this.initialFocused = 0,
     required this.function,
   }) : super(key: key);
@@ -26,11 +26,12 @@ class MyCell extends StatefulWidget {
 
 class MyCellState extends State<MyCell> {
 
-  double _width = 100.0;
-  double _height = 72.0;
+  double _width = 0;
+  double _height = 0;
   double _beforeTextWidth = 0.0;
   double _textHeight = 0.0;
   int linesNum = 1;
+  final TextEditingController _listingController = TextEditingController();
   final TextEditingController _controller = TextEditingController();
   final FocusNode _focusNode = FocusNode();
   int cellKey = -1;
@@ -40,6 +41,7 @@ class MyCellState extends State<MyCell> {
   int _fontStyle = 0;
   int _strike = 0;
   int _codeColor = 0;
+  int _listing = 0;
   final List<Color> _focusedColors = [Colors.white, Colors.blue[50]!.withOpacity(0.3), Colors.blue[50]!];
   final List<TextAlign> _alignments = [TextAlign.left, TextAlign.center, TextAlign.right];
   final List<FontWeight> _fontWeights = [FontWeight.normal, FontWeight.bold];
@@ -91,18 +93,29 @@ class MyCellState extends State<MyCell> {
   String getText() => _controller.text;
 
   String getMDText(){
-    String ret = _controller.text.replaceAll('\n', "<br>");
+    if( _listing == 0 ){
+      String ret = _controller.text.replaceAll('\n', "<br>");
 
-    if( ret == "" ) return ret;
-    if( _codeColor == 1 ) ret = "`$ret`";
-    if( _fontWeight == 1 ) ret = "**$ret**";
-    if( _fontStyle == 1 ) ret = "_${ret}_";
-    if( _strike == 1 ) ret = "~~$ret~~";
+      if( ret == "" ) return ret;
+      if( _codeColor == 1 ) ret = "`$ret`";
+      if( _fontWeight == 1 ) ret = "**$ret**";
+      if( _fontStyle == 1 ) ret = "_${ret}_";
+      if( _strike == 1 ) ret = "~~$ret~~";
+      return ret;
+    }
+    String ret = _listing == 1 ? "<ul>" : "<ol>";
+    List<String> list = _controller.text.split('\n');
+    for(int i = 0; i < list.length; i++){
+      ret += "<li>${list[i]}<\/li>";
+    }
+    ret += _listing == 1 ? "<\/ul>" : "<\/ol>";
     return ret;
   }
+
   int getAlignment() => _alignment;
 
   void setFocusedColor(int focused) => setState(() { _focused = focused; });
+
   void changeAlignment(int alignment) => setState(() { _alignment = alignment; });
   void changeBold() => setState(() { _fontWeight = 1 - _fontWeight; });
   void changeItalic() => setState(() { _fontStyle = 1 - _fontStyle; });
@@ -114,6 +127,25 @@ class MyCellState extends State<MyCell> {
       _fontStyle = 0;
       _strike = 0;
       _codeColor = 0;
+    });
+  }
+  void changeListing(int listing){
+    setState(() {
+      _listing = listing;
+      if( listing == 1 ){
+        String str = "●";
+        for(int i = 1; i < linesNum; i++){
+          str += "\n●";
+        }
+        _listingController.text = str;
+      }
+      else if( listing == 2 ){
+        String str = "1.";
+        for(int i = 1; i < linesNum; i++){
+          str += "\n${i+1}.";
+        }
+        _listingController.text = str;
+      }
     });
   }
 
@@ -129,36 +161,52 @@ class MyCellState extends State<MyCell> {
       width: _width,
       height: _height,
       alignment: Alignment.center,
-      child: TextField(
-        keyboardType: TextInputType.multiline,
-        maxLines: null,
-        controller: _controller,
-        focusNode: _focusNode,
-        onChanged: (string) {
-          print("string: $string");
-          int nowLinesNum = '\n'.allMatches(string).length + 1;
-          if( nowLinesNum > linesNum ){
-            linesNum = nowLinesNum;
-            context.read<CellSizeProvider>().changeHeight();
-          }
-          else if( nowLinesNum < linesNum ){
-            linesNum = nowLinesNum;
-            context.read<CellSizeProvider>().changeHeight();
-          }
-          double nowTextWidth = getSize().width+30;
-          if( _beforeTextWidth <= 100 && nowTextWidth <= 100 ) return ;
-          if( _beforeTextWidth == nowTextWidth ) return ;
-          _beforeTextWidth = nowTextWidth;
-          context.read<CellSizeProvider>().changeWidth();
-        },
-        textAlign: _alignments[_alignment],
-        style: TextStyle(
-          fontSize: 16,
-          fontWeight: _fontWeights[_fontWeight],
-          fontStyle: _fontStyles[_fontStyle],
-          decoration: _textDecorations[_strike],
-          backgroundColor: _colors[_codeColor],
-        ),
+      child: Row(
+        children: [
+          SizedBox(
+            width: _listing > 0 ? 20 : 0,
+            child: TextField(
+              keyboardType: TextInputType.multiline,
+              maxLines: null,
+              controller: _listingController,
+              enabled: false,
+            )
+          ),
+          Expanded(
+            child: TextField(
+              keyboardType: TextInputType.multiline,
+              maxLines: null,
+              controller: _controller,
+              focusNode: _focusNode,
+              onChanged: (string) {
+                print("string: $string");
+                int nowLinesNum = '\n'.allMatches(string).length + 1;
+                if( nowLinesNum > linesNum ){
+                  linesNum = nowLinesNum;
+                  _listingController.text += _listing == 2 ? "\n$linesNum." : "\n●";
+                  context.read<CellSizeProvider>().changeHeight();
+                }
+                else if( nowLinesNum < linesNum ){
+                  linesNum = nowLinesNum;
+                  context.read<CellSizeProvider>().changeHeight();
+                }
+                double nowTextWidth = getSize().width+50;
+                if( _beforeTextWidth <= widget.initialWidth && nowTextWidth <= widget.initialWidth ) return ;
+                if( _beforeTextWidth == nowTextWidth ) return ;
+                _beforeTextWidth = nowTextWidth;
+                context.read<CellSizeProvider>().changeWidth();
+              },
+              textAlign: _alignments[_listing > 0 ? 0 : _alignment],
+              style: TextStyle(
+                fontSize: 16,
+                fontWeight: _fontWeights[_fontWeight],
+                fontStyle: _fontStyles[_fontStyle],
+                decoration: _textDecorations[_strike],
+                backgroundColor: _colors[_codeColor],
+              ),
+            )
+          )
+        ],
       ),
     );
   }
