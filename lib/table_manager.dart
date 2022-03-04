@@ -27,6 +27,9 @@ class TableManagerState extends State<TableManager> {
   List<List<MyCell>> cellTable = [];
   final KeyTable _keyTable = KeyTable();
 
+  List<double> w = [0.0];
+  List<double> h = [0.0];
+
   @override
   void initState(){
     super.initState();
@@ -226,9 +229,6 @@ class TableManagerState extends State<TableManager> {
     isSelecting = true;
   }
 
-  List<double> w = [0.0];
-  List<double> h = [0.0];
-
   void calculateTableSize(){
     w = [0.0];
     h = [0.0];
@@ -241,6 +241,11 @@ class TableManagerState extends State<TableManager> {
       double maxHeight = max<double>(list[0][0], 72.0);
       h.add(h.last + maxHeight);
     }
+    /*
+        w[j]       w[j+1]
+           #cell[i][j]
+        h[i]       h[i+1]
+    */
     for(int j = 0; j < _keyTable.colLen; j++){
       List<List> list = List.generate(_keyTable.rowLen, (index) => [CellHelper.getWidth(_keyTable.table[index][j])+50, index]);
       list.sort((a, b) {
@@ -306,11 +311,11 @@ class TableManagerState extends State<TableManager> {
         else if( w[j] <= s.dx && e.dx <= w[j+1]
             && ((s.dy <= h[i] && h[i] <= e.dy) || (s.dy <= h[i+1] && h[i+1] <= e.dy)) ){
           list.add([i, j]);
-        } // box cells in column
+        } // box in cells in column
         else if( ((s.dx <= w[j] && w[j] <= e.dx) || (s.dx <= w[j+1] && w[j+1] <= e.dx))
             && h[i] <= s.dy && e.dy <= h[i+1] ){
           list.add([i, j]);
-        } // box cells in row
+        } // box in cells in row
         else if( w[j] <= s.dx && e.dx <= w[j+1] && h[i] <= s.dy && e.dy <= h[i+1] ){
           list.add([i, j]);
         } // box in cell
