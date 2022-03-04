@@ -200,6 +200,7 @@ class TableManagerState extends State<TableManager> {
       }
       isSelecting = false;
       selectedCells = [];
+      clearFocus();
       return ;
     }
     List<int> list = findFocusedCell();
@@ -219,6 +220,7 @@ class TableManagerState extends State<TableManager> {
       }
       isSelecting = false;
       selectedCells = [];
+      clearFocus();
       return ;
     }
     List<int> list = findFocusedCell();
@@ -236,6 +238,7 @@ class TableManagerState extends State<TableManager> {
       }
       isSelecting = false;
       selectedCells = [];
+      clearFocus();
       return ;
     }
     List<int> list = findFocusedCell();
@@ -253,6 +256,7 @@ class TableManagerState extends State<TableManager> {
       }
       isSelecting = false;
       selectedCells = [];
+      clearFocus();
       return ;
     }
     List<int> list = findFocusedCell();
@@ -270,6 +274,7 @@ class TableManagerState extends State<TableManager> {
       }
       isSelecting = false;
       selectedCells = [];
+      clearFocus();
       return ;
     }
     List<int> list = findFocusedCell();
@@ -287,6 +292,7 @@ class TableManagerState extends State<TableManager> {
       }
       isSelecting = false;
       selectedCells = [];
+      clearFocus();
       return ;
     }
     List<int> list = findFocusedCell();
@@ -304,6 +310,7 @@ class TableManagerState extends State<TableManager> {
       }
       isSelecting = false;
       selectedCells = [];
+      clearFocus();
       return ;
     }
     List<int> list = findFocusedCell();
@@ -370,12 +377,16 @@ class TableManagerState extends State<TableManager> {
     }
   }
 
-  void startSelecting(){
+  void clearFocus(){
     for(int i = 0; i < rowLen; i++){
       for(int j = 0; j < colLen; j++){
         CellHelper.setFocusedColor(keyTable[i][j], 0);
       }
     }
+  }
+
+  void startSelecting(){
+    clearFocus();
     calculateTableSize();
     isSelecting = true;
   }
