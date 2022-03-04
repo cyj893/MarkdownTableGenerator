@@ -1,8 +1,10 @@
 import 'dart:math';
 import 'package:flutter/material.dart';
+import 'package:markdown_table_generator/table_helper.dart';
 
 import 'my_cell.dart';
 import 'cell_helper.dart';
+
 
 class KeyTable {
   static final KeyTable _keyTableInstance = KeyTable._internal();
@@ -20,6 +22,7 @@ class KeyTable {
   void setFocusedCellKey(int key){
     focusedCellKey = key;
     setFocusedColor();
+    TableHelper().setIsSelecting(false);
   }
 
   void printKeyTable(){
@@ -72,6 +75,7 @@ class KeyTable {
         CellHelper.setFocusedColor(table[i][j], 0);
       }
     }
+    focusedCellKey = -1;
   }
 
   void resizeTableWidth(int colNum){

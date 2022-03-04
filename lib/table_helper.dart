@@ -32,5 +32,9 @@ class TableHelper {
 
   void startSelecting() => tableKey.currentState!.startSelecting();
   void endSelecting(Offset startOffset, Offset nowOffset) => tableKey.currentState!.endSelecting(startOffset, nowOffset);
+  void setIsSelecting(bool b){
+    tableKey.currentState!.isSelecting = b;
+    tableKey.currentState!.selectedCells = [];
+  }
 
 }
