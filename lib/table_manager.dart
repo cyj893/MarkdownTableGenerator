@@ -198,6 +198,8 @@ class TableManagerState extends State<TableManager> {
         }
         if( selectedCells[i][0] != t ) break;
       }
+      isSelecting = false;
+      selectedCells = [];
       return ;
     }
     List<int> list = findFocusedCell();
@@ -215,6 +217,8 @@ class TableManagerState extends State<TableManager> {
       for(int i = 0; i < selectedCells.length; i++){
         CellHelper.changeBold(keyTable[selectedCells[i][0]][selectedCells[i][1]]);
       }
+      isSelecting = false;
+      selectedCells = [];
       return ;
     }
     List<int> list = findFocusedCell();
@@ -230,6 +234,8 @@ class TableManagerState extends State<TableManager> {
       for(int i = 0; i < selectedCells.length; i++){
         CellHelper.changeItalic(keyTable[selectedCells[i][0]][selectedCells[i][1]]);
       }
+      isSelecting = false;
+      selectedCells = [];
       return ;
     }
     List<int> list = findFocusedCell();
@@ -245,6 +251,8 @@ class TableManagerState extends State<TableManager> {
       for(int i = 0; i < selectedCells.length; i++){
         CellHelper.changeStrike(keyTable[selectedCells[i][0]][selectedCells[i][1]]);
       }
+      isSelecting = false;
+      selectedCells = [];
       return ;
     }
     List<int> list = findFocusedCell();
@@ -260,6 +268,8 @@ class TableManagerState extends State<TableManager> {
       for(int i = 0; i < selectedCells.length; i++){
         CellHelper.changeCode(keyTable[selectedCells[i][0]][selectedCells[i][1]]);
       }
+      isSelecting = false;
+      selectedCells = [];
       return ;
     }
     List<int> list = findFocusedCell();
@@ -275,6 +285,8 @@ class TableManagerState extends State<TableManager> {
       for(int i = 0; i < selectedCells.length; i++){
         CellHelper.clearDeco(keyTable[selectedCells[i][0]][selectedCells[i][1]]);
       }
+      isSelecting = false;
+      selectedCells = [];
       return ;
     }
     List<int> list = findFocusedCell();
@@ -290,6 +302,8 @@ class TableManagerState extends State<TableManager> {
       for(int i = 0; i < selectedCells.length; i++){
         CellHelper.changeListing(keyTable[selectedCells[i][0]][selectedCells[i][1]], listing);
       }
+      isSelecting = false;
+      selectedCells = [];
       return ;
     }
     List<int> list = findFocusedCell();
