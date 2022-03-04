@@ -22,6 +22,7 @@ class MouseDragSelectable extends StatelessWidget {
     return GestureDetector(
       onTapDown: (TapDownDetails details) {
         startOffset = Offset(details.localPosition.dx, details.localPosition.dy);
+        nowOffset = startOffset;
         print("onTapDown: x: ${startOffset.dx}, y: ${startOffset.dy}");
         drKey.currentState?.rePaint(startOffset, startOffset);
       },
