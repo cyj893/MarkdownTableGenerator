@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:markdown_table_generator/mouse_drag_selectable.dart';
 import 'dart:math';
 import 'package:provider/provider.dart';
 
@@ -309,6 +310,97 @@ class TableManagerState extends State<TableManager> {
     }
   }
 
+
+  void endSelecting(Offset startOffset, Offset nowOffset){
+    Offset s = Offset(0, 0);
+    Offset e = Offset(0, 0);
+    if( startOffset.dx < nowOffset.dx ){
+      if( startOffset.dy < nowOffset.dy ){
+        /*
+        s            n.dx, s.dy
+        s.dx, n.dy   n
+         */
+        s = startOffset;
+        e = nowOffset;
+      }
+      else{
+        /*
+        s.dx, n.dy   n
+        s            n.dx, s.dy
+         */
+        s = Offset(startOffset.dx, nowOffset.dy);
+        e = Offset(nowOffset.dx, startOffset.dy);
+      }
+    }
+    else{
+      if( startOffset.dy < nowOffset.dy ){
+        /*
+        n.dx, s.dy   s
+        n            s.dx, n.dy
+         */
+        s = Offset(nowOffset.dx, startOffset.dy);
+        e = Offset(startOffset.dx, nowOffset.dy);
+      }
+      else{
+        /*
+        n            s.dx, n.dy
+        n.dx, s.dy   s
+         */
+        s = nowOffset;
+        e = startOffset;
+      }
+    }
+
+    print("");
+    print("s: $s, e: $e");
+    print("rowLen: $rowLen, colLen: $colLen");
+    List<double> w = [0.0];
+    List<double> h = [0.0];
+
+    for(int i = 0; i < rowLen; i++){
+      List<List> list = List.generate(colLen, (index) => [CellHelper.getHeight(keyTable[i][index]), index]);
+      list.sort((a, b) {
+        if( a[0] >= b[0] ) return -1;
+        return 1;
+      });
+      double maxHeight = max<double>(list[0][0], 72.0);
+      h.add(h.last + maxHeight);
+    }
+    for(int j = 0; j < colLen; j++){
+      List<List> list = List.generate(rowLen, (index) => [CellHelper.getWidth(keyTable[index][j])+50, index]);
+      list.sort((a, b) {
+        if( a[0] >= b[0] ) return -1;
+        return 1;
+      });
+      double maxWidth = max<double>(list[0][0], 120.0);
+      w.add(w.last + maxWidth);
+    }
+
+    print("w: $w, h: $h");
+    List<List<int>> list = [];
+    for(int i = 0; i < rowLen; i++){
+      for(int j = 0; j < colLen; j++){
+        print("${w[j]}, ${h[i]}");
+        if( ((s.dx <= w[j] && w[j] <= e.dx) || (s.dx <= w[j+1] && w[j+1] <= e.dx))
+            && ((s.dy <= h[i] && h[i] <= e.dy) || (s.dy <= h[i+1] && h[i+1] <= e.dy)) )
+          list.add([i, j]);
+        if( w[j] <= s.dx && e.dx <= w[j+1]
+            && ((s.dy <= h[i] && h[i] <= e.dy) || (s.dy <= h[i+1] && h[i+1] <= e.dy)) )
+          list.add([i, j]);
+        if( ((s.dx <= w[j] && w[j] <= e.dx) || (s.dx <= w[j+1] && w[j+1] <= e.dx))
+            && h[i] <= s.dy && e.dy <= h[i+1] )
+          list.add([i, j]);
+      }
+    }
+
+    print("result: $list");
+    print("");
+
+    for(int i = 0; i < list.length; i++){
+      CellHelper.setFocusedColor(keyTable[list[i][0]][list[i][1]], 2);
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     widthProvider = context.watch<CellSizeProvider>().isWidthChanged;
@@ -323,10 +415,12 @@ class TableManagerState extends State<TableManager> {
       resizeTableHeight(indexes[0]);
       context.read<CellSizeProvider>().endHeightChanging();
     }
-    return Column(
-      children: List.generate(
-          rowLen, (i) => Row(
-        children: List.generate(colLen, (j) => cellTable[i][j]),)),
+    return MouseDragSelectable(
+        child: Column(
+          children: List.generate(
+              rowLen, (i) => Row(
+            children: List.generate(colLen, (j) => cellTable[i][j]),)),
+        )
     );
   }
 
