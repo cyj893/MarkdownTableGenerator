@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import 'table_manager.dart';
+import 'cell_helper.dart';
 
 class TableHelper {
   static final TableHelper _tableHelperInstance = TableHelper._internal();
@@ -20,11 +21,11 @@ class TableHelper {
   void deleteColumn() => tableKey.currentState!.deleteColumn();
 
   void setAlignment(int alignment) => tableKey.currentState!.setAlignment(alignment);
-  void changeCellBold() => tableKey.currentState!.changeCellBold();
-  void changeCellItalic() => tableKey.currentState!.changeCellItalic();
-  void changeCellStrike() => tableKey.currentState!.changeCellStrike();
-  void changeCellCode() => tableKey.currentState!.changeCellCode();
-  void clearCellDeco() => tableKey.currentState!.clearCellDeco();
+  void changeCellBold() => tableKey.currentState!.changeCellDeco(CellHelper.changeBold);
+  void changeCellItalic() => tableKey.currentState!.changeCellDeco(CellHelper.changeItalic);
+  void changeCellStrike() => tableKey.currentState!.changeCellDeco(CellHelper.changeStrike);
+  void changeCellCode() => tableKey.currentState!.changeCellDeco(CellHelper.changeCode);
+  void clearCellDeco() => tableKey.currentState!.changeCellDeco(CellHelper.clearDeco);
   void changeListing(int listing) => tableKey.currentState!.changeListing(listing);
 
   String makeMdData() => tableKey.currentState?.makeMdData() ?? "";

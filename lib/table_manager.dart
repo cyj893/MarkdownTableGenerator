@@ -213,10 +213,10 @@ class TableManagerState extends State<TableManager> {
     }
   }
 
-  void changeCellBold() {
+  void changeCellDeco(Function f) {
     if( isSelecting ){
       for(int i = 0; i < selectedCells.length; i++){
-        CellHelper.changeBold(keyTable[selectedCells[i][0]][selectedCells[i][1]]);
+        f(keyTable[selectedCells[i][0]][selectedCells[i][1]]);
       }
       isSelecting = false;
       selectedCells = [];
@@ -225,82 +225,10 @@ class TableManagerState extends State<TableManager> {
     }
     List<int> list = findFocusedCell();
     if( list.isEmpty ){
-      debugPrint("Error changeCellBold");
+      debugPrint("Error changeCellDeco: $f");
       return ;
     }
-    CellHelper.changeBold(keyTable[list[0]][list[1]]);
-  }
-
-  void changeCellItalic() {
-    if( isSelecting ){
-      for(int i = 0; i < selectedCells.length; i++){
-        CellHelper.changeItalic(keyTable[selectedCells[i][0]][selectedCells[i][1]]);
-      }
-      isSelecting = false;
-      selectedCells = [];
-      clearFocus();
-      return ;
-    }
-    List<int> list = findFocusedCell();
-    if( list.isEmpty ){
-      debugPrint("Error changeCellItalic");
-      return ;
-    }
-    CellHelper.changeItalic(keyTable[list[0]][list[1]]);
-  }
-
-  void changeCellStrike() {
-    if( isSelecting ){
-      for(int i = 0; i < selectedCells.length; i++){
-        CellHelper.changeStrike(keyTable[selectedCells[i][0]][selectedCells[i][1]]);
-      }
-      isSelecting = false;
-      selectedCells = [];
-      clearFocus();
-      return ;
-    }
-    List<int> list = findFocusedCell();
-    if( list.isEmpty ){
-      debugPrint("Error changeCellStrike");
-      return ;
-    }
-    CellHelper.changeStrike(keyTable[list[0]][list[1]]);
-  }
-
-  void changeCellCode() {
-    if( isSelecting ){
-      for(int i = 0; i < selectedCells.length; i++){
-        CellHelper.changeCode(keyTable[selectedCells[i][0]][selectedCells[i][1]]);
-      }
-      isSelecting = false;
-      selectedCells = [];
-      clearFocus();
-      return ;
-    }
-    List<int> list = findFocusedCell();
-    if( list.isEmpty ){
-      debugPrint("Error changeCellCode");
-      return ;
-    }
-    CellHelper.changeCode(keyTable[list[0]][list[1]]);
-  }
-
-  void clearCellDeco() {
-    if( isSelecting ){
-      for(int i = 0; i < selectedCells.length; i++){
-        CellHelper.clearDeco(keyTable[selectedCells[i][0]][selectedCells[i][1]]);
-      }
-      isSelecting = false;
-      selectedCells = [];
-      clearFocus();
-      return ;
-    }
-    List<int> list = findFocusedCell();
-    if( list.isEmpty ){
-      debugPrint("Error clearCellDeco");
-      return ;
-    }
-    CellHelper.clearDeco(keyTable[list[0]][list[1]]);
+    f(keyTable[list[0]][list[1]]);
   }
 
   void changeListing(int listing) {
