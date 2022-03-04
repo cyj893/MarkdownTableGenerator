@@ -296,13 +296,9 @@ class TableManagerState extends State<TableManager> {
     Offset s = switchedList[0];
     Offset e = switchedList[1];
 
-    print("");
-    print("s: $s, e: $e");
-    print("w: $w, h: $h");
     List<List<int>> list = [];
     for(int i = 0; i < _keyTable.rowLen; i++){
       for(int j = 0; j < _keyTable.colLen; j++){
-        print("${w[j]}, ${h[i]}");
         if( ((s.dx <= w[j] && w[j] <= e.dx) || (s.dx <= w[j+1] && w[j+1] <= e.dx))
             && ((s.dy <= h[i] && h[i] <= e.dy) || (s.dy <= h[i+1] && h[i+1] <= e.dy)) ){
           list.add([i, j]);
@@ -322,9 +318,6 @@ class TableManagerState extends State<TableManager> {
     }
 
     selectedCells = list;
-    print("result: $selectedCells");
-    print("");
-
     for(int i = 0; i < list.length; i++){
       CellHelper.setFocusedColor(_keyTable.table[list[i][0]][list[i][1]], 2);
     }
