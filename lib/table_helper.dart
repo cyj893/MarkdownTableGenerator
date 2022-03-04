@@ -29,4 +29,7 @@ class TableHelper {
 
   String makeMdData() => tableKey.currentState?.makeMdData() ?? "";
 
+  void startSelecting() => tableKey.currentState!.startSelecting();
+  void endSelecting(Offset startOffset, Offset nowOffset) => tableKey.currentState!.endSelecting(startOffset, nowOffset);
+
 }
