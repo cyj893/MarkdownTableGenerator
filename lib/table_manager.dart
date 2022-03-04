@@ -304,14 +304,20 @@ class TableManagerState extends State<TableManager> {
       for(int j = 0; j < _keyTable.colLen; j++){
         print("${w[j]}, ${h[i]}");
         if( ((s.dx <= w[j] && w[j] <= e.dx) || (s.dx <= w[j+1] && w[j+1] <= e.dx))
-            && ((s.dy <= h[i] && h[i] <= e.dy) || (s.dy <= h[i+1] && h[i+1] <= e.dy)) )
+            && ((s.dy <= h[i] && h[i] <= e.dy) || (s.dy <= h[i+1] && h[i+1] <= e.dy)) ){
           list.add([i, j]);
-        if( w[j] <= s.dx && e.dx <= w[j+1]
-            && ((s.dy <= h[i] && h[i] <= e.dy) || (s.dy <= h[i+1] && h[i+1] <= e.dy)) )
+        } // common cases
+        else if( w[j] <= s.dx && e.dx <= w[j+1]
+            && ((s.dy <= h[i] && h[i] <= e.dy) || (s.dy <= h[i+1] && h[i+1] <= e.dy)) ){
           list.add([i, j]);
-        if( ((s.dx <= w[j] && w[j] <= e.dx) || (s.dx <= w[j+1] && w[j+1] <= e.dx))
-            && h[i] <= s.dy && e.dy <= h[i+1] )
+        } // box cells in column
+        else if( ((s.dx <= w[j] && w[j] <= e.dx) || (s.dx <= w[j+1] && w[j+1] <= e.dx))
+            && h[i] <= s.dy && e.dy <= h[i+1] ){
           list.add([i, j]);
+        } // box cells in row
+        else if( w[j] <= s.dx && e.dx <= w[j+1] && h[i] <= s.dy && e.dy <= h[i+1] ){
+          list.add([i, j]);
+        } // box in cell
       }
     }
 
