@@ -146,9 +146,6 @@ class TableManagerState extends State<TableManager> {
         }
         if( selectedCells[i][0] != t ) break;
       }
-      isSelecting = false;
-      selectedCells = [];
-      _keyTable.clearFocus();
       return ;
     }
     List<int> list = _keyTable.findFocusedCell();
@@ -166,9 +163,6 @@ class TableManagerState extends State<TableManager> {
       for(int i = 0; i < selectedCells.length; i++){
         f(_keyTable.table[selectedCells[i][0]][selectedCells[i][1]]);
       }
-      isSelecting = false;
-      selectedCells = [];
-      _keyTable.clearFocus();
       return ;
     }
     List<int> list = _keyTable.findFocusedCell();
@@ -184,9 +178,6 @@ class TableManagerState extends State<TableManager> {
       for(int i = 0; i < selectedCells.length; i++){
         CellHelper.changeListing(_keyTable.table[selectedCells[i][0]][selectedCells[i][1]], listing);
       }
-      isSelecting = false;
-      selectedCells = [];
-      _keyTable.clearFocus();
       return ;
     }
     List<int> list = _keyTable.findFocusedCell();
