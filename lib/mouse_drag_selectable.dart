@@ -11,8 +11,8 @@ class MouseDragSelectable extends StatelessWidget {
       {Key? key, required this.child}
       ) : super(key: key);
 
-  Offset startOffset = Offset(0, 0);
-  Offset nowOffset = Offset(0, 0);
+  Offset startOffset = const Offset(0, 0);
+  Offset nowOffset = const Offset(0, 0);
 
   GlobalKey<MouseDragBoxState> drKey = GlobalKey();
 
@@ -29,6 +29,7 @@ class MouseDragSelectable extends StatelessWidget {
         startOffset = Offset(details.localPosition.dx, details.localPosition.dy);
         print("onLongPressStart: x: ${startOffset.dx}, y: ${startOffset.dy}");
         drKey.currentState?.rePaint(startOffset, startOffset);
+        TableHelper().startSelecting();
       },
       onLongPressMoveUpdate: (LongPressMoveUpdateDetails details){
         nowOffset = Offset(details.localPosition.dx, details.localPosition.dy);
@@ -38,7 +39,7 @@ class MouseDragSelectable extends StatelessWidget {
       onLongPressEnd: (LongPressEndDetails details){
         print("onLongPressEnd: x: ${details.localPosition.dx}, y: ${details.localPosition.dy}");
         TableHelper().endSelecting(startOffset, nowOffset);
-        startOffset = Offset(0, 0);
+        startOffset = const Offset(0, 0);
         drKey.currentState?.rePaint(startOffset, startOffset);
       },
       child: Stack(

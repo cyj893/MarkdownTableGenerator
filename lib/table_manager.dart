@@ -23,11 +23,11 @@ class TableManagerState extends State<TableManager> {
 
   bool widthProvider = false;
   bool heightProvider = false;
+  bool isSelecting = false;
+  List<List<int>> selectedCells = [];
 
   int rowLen = 3;
   int colLen = 3;
-  bool isRowSelected = false;
-  bool isColSelected = false;
 
   List<List<MyCell>> cellTable = [];
   List<List<GlobalKey<MyCellState>>> keyTable = [];
@@ -190,6 +190,16 @@ class TableManagerState extends State<TableManager> {
   }
 
   void setAlignment(int alignment){
+    if( isSelecting ){
+      int t = selectedCells[0][0];
+      for(int i = 0; i < selectedCells.length; i++){
+        for(int j = 0; j < keyTable.length; j++){
+          CellHelper.changeAlignment(keyTable[j][selectedCells[i][1]], alignment);
+        }
+        if( selectedCells[i][0] != t ) break;
+      }
+      return ;
+    }
     List<int> list = findFocusedCell();
     if( list.isEmpty ){
       debugPrint("Error setAlignment");
@@ -201,6 +211,12 @@ class TableManagerState extends State<TableManager> {
   }
 
   void changeCellBold() {
+    if( isSelecting ){
+      for(int i = 0; i < selectedCells.length; i++){
+        CellHelper.changeBold(keyTable[selectedCells[i][0]][selectedCells[i][1]]);
+      }
+      return ;
+    }
     List<int> list = findFocusedCell();
     if( list.isEmpty ){
       debugPrint("Error changeCellBold");
@@ -210,6 +226,12 @@ class TableManagerState extends State<TableManager> {
   }
 
   void changeCellItalic() {
+    if( isSelecting ){
+      for(int i = 0; i < selectedCells.length; i++){
+        CellHelper.changeItalic(keyTable[selectedCells[i][0]][selectedCells[i][1]]);
+      }
+      return ;
+    }
     List<int> list = findFocusedCell();
     if( list.isEmpty ){
       debugPrint("Error changeCellItalic");
@@ -219,6 +241,12 @@ class TableManagerState extends State<TableManager> {
   }
 
   void changeCellStrike() {
+    if( isSelecting ){
+      for(int i = 0; i < selectedCells.length; i++){
+        CellHelper.changeStrike(keyTable[selectedCells[i][0]][selectedCells[i][1]]);
+      }
+      return ;
+    }
     List<int> list = findFocusedCell();
     if( list.isEmpty ){
       debugPrint("Error changeCellStrike");
@@ -228,6 +256,12 @@ class TableManagerState extends State<TableManager> {
   }
 
   void changeCellCode() {
+    if( isSelecting ){
+      for(int i = 0; i < selectedCells.length; i++){
+        CellHelper.changeCode(keyTable[selectedCells[i][0]][selectedCells[i][1]]);
+      }
+      return ;
+    }
     List<int> list = findFocusedCell();
     if( list.isEmpty ){
       debugPrint("Error changeCellCode");
@@ -237,6 +271,12 @@ class TableManagerState extends State<TableManager> {
   }
 
   void clearCellDeco() {
+    if( isSelecting ){
+      for(int i = 0; i < selectedCells.length; i++){
+        CellHelper.clearDeco(keyTable[selectedCells[i][0]][selectedCells[i][1]]);
+      }
+      return ;
+    }
     List<int> list = findFocusedCell();
     if( list.isEmpty ){
       debugPrint("Error clearCellDeco");
@@ -246,6 +286,12 @@ class TableManagerState extends State<TableManager> {
   }
 
   void changeListing(int listing) {
+    if( isSelecting ){
+      for(int i = 0; i < selectedCells.length; i++){
+        CellHelper.changeListing(keyTable[selectedCells[i][0]][selectedCells[i][1]], listing);
+      }
+      return ;
+    }
     List<int> list = findFocusedCell();
     if( list.isEmpty ){
       debugPrint("Error changeListing");
@@ -310,53 +356,22 @@ class TableManagerState extends State<TableManager> {
     }
   }
 
-
-  void endSelecting(Offset startOffset, Offset nowOffset){
-    Offset s = Offset(0, 0);
-    Offset e = Offset(0, 0);
-    if( startOffset.dx < nowOffset.dx ){
-      if( startOffset.dy < nowOffset.dy ){
-        /*
-        s            n.dx, s.dy
-        s.dx, n.dy   n
-         */
-        s = startOffset;
-        e = nowOffset;
-      }
-      else{
-        /*
-        s.dx, n.dy   n
-        s            n.dx, s.dy
-         */
-        s = Offset(startOffset.dx, nowOffset.dy);
-        e = Offset(nowOffset.dx, startOffset.dy);
+  void startSelecting(){
+    for(int i = 0; i < rowLen; i++){
+      for(int j = 0; j < colLen; j++){
+        CellHelper.setFocusedColor(keyTable[i][j], 0);
       }
     }
-    else{
-      if( startOffset.dy < nowOffset.dy ){
-        /*
-        n.dx, s.dy   s
-        n            s.dx, n.dy
-         */
-        s = Offset(nowOffset.dx, startOffset.dy);
-        e = Offset(startOffset.dx, nowOffset.dy);
-      }
-      else{
-        /*
-        n            s.dx, n.dy
-        n.dx, s.dy   s
-         */
-        s = nowOffset;
-        e = startOffset;
-      }
-    }
+    calculateTableSize();
+    isSelecting = true;
+  }
 
-    print("");
-    print("s: $s, e: $e");
-    print("rowLen: $rowLen, colLen: $colLen");
-    List<double> w = [0.0];
-    List<double> h = [0.0];
+  List<double> w = [0.0];
+  List<double> h = [0.0];
 
+  void calculateTableSize(){
+    w = [0.0];
+    h = [0.0];
     for(int i = 0; i < rowLen; i++){
       List<List> list = List.generate(colLen, (index) => [CellHelper.getHeight(keyTable[i][index]), index]);
       list.sort((a, b) {
@@ -375,7 +390,55 @@ class TableManagerState extends State<TableManager> {
       double maxWidth = max<double>(list[0][0], 120.0);
       w.add(w.last + maxWidth);
     }
+  }
 
+  List<Offset> switchOffsets(Offset a, Offset b){
+    Offset s = const Offset(0, 0);
+    Offset e = const Offset(0, 0);
+    /*
+        a            b.dx, a.dy
+        a.dx, b.dy   b
+
+        a.dx, b.dy   b
+        a            b.dx, a.dy
+
+        b.dx, a.dy   a
+        b            a.dx, b.dy
+
+        b            a.dx, b.dy
+        b.dx, a.dy   a
+    */
+    if( a.dx < b.dx ){
+      if( a.dy < b.dy ){
+        s = a;
+        e = b;
+      }
+      else{
+        s = Offset(a.dx, b.dy);
+        e = Offset(b.dx, a.dy);
+      }
+    }
+    else{
+      if( a.dy < b.dy ){
+        s = Offset(b.dx, a.dy);
+        e = Offset(a.dx, b.dy);
+      }
+      else{
+        s = b;
+        e = a;
+      }
+    }
+    return [s, e];
+  }
+
+  void endSelecting(Offset startOffset, Offset nowOffset){
+    List<Offset> switchedList = switchOffsets(startOffset, nowOffset);
+    Offset s = switchedList[0];
+    Offset e = switchedList[1];
+
+    print("");
+    print("s: $s, e: $e");
+    print("rowLen: $rowLen, colLen: $colLen");
     print("w: $w, h: $h");
     List<List<int>> list = [];
     for(int i = 0; i < rowLen; i++){
@@ -393,7 +456,8 @@ class TableManagerState extends State<TableManager> {
       }
     }
 
-    print("result: $list");
+    selectedCells = list;
+    print("result: $selectedCells");
     print("");
 
     for(int i = 0; i < list.length; i++){
@@ -403,6 +467,7 @@ class TableManagerState extends State<TableManager> {
 
   @override
   Widget build(BuildContext context) {
+    print("Build 0");
     widthProvider = context.watch<CellSizeProvider>().isWidthChanged;
     heightProvider = context.watch<CellSizeProvider>().isHeightChanged;
     if( widthProvider ){
