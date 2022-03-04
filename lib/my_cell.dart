@@ -1,22 +1,19 @@
 import 'package:flutter/material.dart';
-import 'package:markdown_table_generator/cell_size_provider.dart';
-import 'package:provider/provider.dart';
-import 'focused_cell.dart';
+
 import 'cell_key_generator.dart';
+import 'key_table.dart';
 
 class MyCell extends StatefulWidget {
 
   final double initialWidth;
   final double initialHeight;
   final int initialFocused;
-  final Function function;
 
   const MyCell({
     Key? key,
     this.initialWidth = 120.0,
     this.initialHeight = 72.0,
     this.initialFocused = 0,
-    required this.function,
   }) : super(key: key);
 
   @override
@@ -26,6 +23,8 @@ class MyCell extends StatefulWidget {
 
 class MyCellState extends State<MyCell> {
 
+  final KeyTable _keyTable = KeyTable();
+  
   double _width = 0;
   double _height = 0;
   double _beforeTextWidth = 0.0;
@@ -60,8 +59,7 @@ class MyCellState extends State<MyCell> {
     _focusNode.addListener(() {
       if( _focusNode.hasFocus ){
         debugPrint("Focus on $cellKey: \"${_controller.text}\"");
-        FocusedCell().setKey(cellKey);
-        widget.function();
+        _keyTable.setFocusedCellKey(cellKey);
       }
     });
 
@@ -151,6 +149,30 @@ class MyCellState extends State<MyCell> {
     });
   }
 
+  void checkHeight(String string){
+    int nowLinesNum = '\n'.allMatches(string).length + 1;
+    if( nowLinesNum > linesNum ){
+      linesNum = nowLinesNum;
+      _listingController.text += _listing == 2 ? "\n$linesNum." : "\n●";
+      List indexes = _keyTable.findFocusedCell();
+      _keyTable.resizeTableHeight(indexes[0]);
+    }
+    else if( nowLinesNum < linesNum ){
+      linesNum = nowLinesNum;
+      List indexes = _keyTable.findFocusedCell();
+      _keyTable.resizeTableHeight(indexes[0]);
+    }
+  }
+
+  void checkWidth(String string){
+    double nowTextWidth = getSize().width+50;
+    if( _beforeTextWidth <= widget.initialWidth && nowTextWidth <= widget.initialWidth ) return ;
+    if( _beforeTextWidth == nowTextWidth ) return ;
+    _beforeTextWidth = nowTextWidth;
+    List indexes = _keyTable.findFocusedCell();
+    _keyTable.resizeTableWidth(indexes[1]);
+  }
+
   @override
   Widget build(BuildContext context) {
     _textHeight = getSize().height;
@@ -182,21 +204,8 @@ class MyCellState extends State<MyCell> {
               focusNode: _focusNode,
               onChanged: (string) {
                 debugPrint("string: $string");
-                int nowLinesNum = '\n'.allMatches(string).length + 1;
-                if( nowLinesNum > linesNum ){
-                  linesNum = nowLinesNum;
-                  _listingController.text += _listing == 2 ? "\n$linesNum." : "\n●";
-                  context.read<CellSizeProvider>().changeHeight();
-                }
-                else if( nowLinesNum < linesNum ){
-                  linesNum = nowLinesNum;
-                  context.read<CellSizeProvider>().changeHeight();
-                }
-                double nowTextWidth = getSize().width+50;
-                if( _beforeTextWidth <= widget.initialWidth && nowTextWidth <= widget.initialWidth ) return ;
-                if( _beforeTextWidth == nowTextWidth ) return ;
-                _beforeTextWidth = nowTextWidth;
-                context.read<CellSizeProvider>().changeWidth();
+                checkHeight(string);
+                checkWidth(string);
               },
               textAlign: _alignments[_listing > 0 ? 0 : _alignment],
               style: TextStyle(

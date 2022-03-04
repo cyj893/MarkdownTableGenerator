@@ -1,18 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:markdown_table_generator/cell_size_provider.dart';
-import 'package:provider/provider.dart';
 
 import 'my_hom_page.dart';
 
 void main() {
-  runApp(
-    MultiProvider(
-      providers: [
-        ChangeNotifierProvider(create: (_) => CellSizeProvider()),
-      ],
-      child: const MyApp(),
-    ),
-  );
+  runApp(const MyApp());
 }
 
 class MyApp extends StatelessWidget {
