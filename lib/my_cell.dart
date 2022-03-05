@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import 'my_enums.dart';
 import 'cell_key_generator.dart';
 import 'key_table.dart';
 
@@ -35,12 +36,12 @@ class MyCellState extends State<MyCell> {
   final FocusNode _focusNode = FocusNode();
   int cellKey = -1;
   int _focused = 0;
-  int _alignment = 1;
+  Alignments _alignment = Alignments.center;
   int _fontWeight = 0;
   int _fontStyle = 0;
   int _strike = 0;
   int _codeColor = 0;
-  int _listing = 0;
+  Listings _listing = Listings.none;
   final List<Color> _focusedColors = [Colors.white, Colors.blue[50]!.withOpacity(0.3), Colors.blue[50]!];
   final List<TextAlign> _alignments = [TextAlign.left, TextAlign.center, TextAlign.right];
   final List<FontWeight> _fontWeights = [FontWeight.normal, FontWeight.bold];
@@ -94,8 +95,8 @@ class MyCellState extends State<MyCell> {
 
   String getMDText(){
     String ret = "";
-    if( _listing != 0 ){
-      ret = _listing == 1 ? "<ul>" : "<ol>";
+    if( _listing != Listings.none ){
+      ret = _listing == Listings.unordered ? "<ul>" : "<ol>";
       List<String> list = _controller.text.split('\n');
       for(int i = 0; i < list.length; i++){
         if( _codeColor == 1 ){  // code deco should be inside
@@ -105,24 +106,24 @@ class MyCellState extends State<MyCell> {
           ret += "<li>${list[i]}</li>";
         }
       }
-      ret += _listing == 1 ? "</ul>" : "</ol>";
+      ret += _listing == Listings.unordered ? "</ul>" : "</ol>";
     }
     else{
       ret = _controller.text.replaceAll('\n', "<br>");
     }
     if( ret == "" ) return ret;
-    if( _listing == 0 && _codeColor == 1 ) ret = "`$ret`";
+    if( _listing == Listings.none && _codeColor == 1 ) ret = "`$ret`";
     if( _fontWeight == 1 ) ret = "**$ret**";
     if( _fontStyle == 1 ) ret = "_${ret}_";
     if( _strike == 1 ) ret = "~~$ret~~";
     return ret;
   }
 
-  int getAlignment() => _alignment;
+  Alignments getAlignment() => _alignment;
 
   void setFocusedColor(int focused) => setState(() { _focused = focused; });
 
-  void changeAlignment(int alignment) => setState(() { _alignment = alignment; });
+  void changeAlignment(Alignments alignment) => setState(() { _alignment = alignment; });
   void changeBold() => setState(() { _fontWeight = 1 - _fontWeight; });
   void changeItalic() => setState(() { _fontStyle = 1 - _fontStyle; });
   void changeStrike() => setState(() { _strike = 1 - _strike; });
@@ -135,22 +136,28 @@ class MyCellState extends State<MyCell> {
       _codeColor = 0;
     });
   }
-  void changeListing(int listing){
+  void changeListing(Listings listing){
     setState(() {
       _listing = listing;
-      if( listing == 1 ){
-        String str = "●";
-        for(int i = 1; i < linesNum; i++){
-          str += "\n●";
-        }
-        _listingController.text = str;
-      }
-      else if( listing == 2 ){
-        String str = "1.";
-        for(int i = 1; i < linesNum; i++){
-          str += "\n${i+1}.";
-        }
-        _listingController.text = str;
+      switch( listing ){
+        case Listings.none:
+          break;
+        case Listings.unordered:
+          String str = "●";
+          for(int i = 1; i < linesNum; i++){
+            str += "\n●";
+          }
+          _listingController.text = str;
+          break;
+        case Listings.ordered:
+          String str = "1.";
+          for(int i = 1; i < linesNum; i++){
+            str += "\n${i+1}.";
+          }
+          _listingController.text = str;
+          break;
+        default:
+          debugPrint("changeListing Error");
       }
     });
   }
@@ -159,7 +166,7 @@ class MyCellState extends State<MyCell> {
     int nowLinesNum = '\n'.allMatches(string).length + 1;
     if( nowLinesNum > linesNum ){
       linesNum = nowLinesNum;
-      _listingController.text += _listing == 2 ? "\n$linesNum." : "\n●";
+      _listingController.text += _listing == Listings.unordered ? "\n●" : "\n$linesNum.";
       List indexes = _keyTable.findFocusedCell();
       _keyTable.resizeTableHeight(indexes[0]);
     }
@@ -194,7 +201,7 @@ class MyCellState extends State<MyCell> {
       child: Row(
         children: [
           SizedBox(
-            width: _listing > 0 ? 20 : 0,
+            width: _listing != Listings.none ? 20 : 0,
             child: TextField(
               keyboardType: TextInputType.multiline,
               maxLines: null,
@@ -213,7 +220,7 @@ class MyCellState extends State<MyCell> {
                 checkHeight(string);
                 checkWidth(string);
               },
-              textAlign: _alignments[_listing > 0 ? 0 : _alignment],
+              textAlign: _alignments[_listing != Listings.none ? 0 : _alignment.index],
               style: TextStyle(
                 fontSize: 16,
                 fontWeight: _fontWeights[_fontWeight],

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:markdown_table_generator/my_enums.dart';
 
 import 'table_manager.dart';
 import 'cell_helper.dart';
@@ -20,13 +21,13 @@ class TableHelper {
   void insertColumn(int location) => tableKey.currentState!.insertColumn(location);
   void deleteColumn() => tableKey.currentState!.deleteColumn();
 
-  void setAlignment(int alignment) => tableKey.currentState!.setAlignment(alignment);
+  void setAlignment(Alignments alignment) => tableKey.currentState!.setAlignment(alignment);
   void changeCellBold() => tableKey.currentState!.changeCellDeco(CellHelper.changeBold);
   void changeCellItalic() => tableKey.currentState!.changeCellDeco(CellHelper.changeItalic);
   void changeCellStrike() => tableKey.currentState!.changeCellDeco(CellHelper.changeStrike);
   void changeCellCode() => tableKey.currentState!.changeCellDeco(CellHelper.changeCode);
   void clearCellDeco() => tableKey.currentState!.changeCellDeco(CellHelper.clearDeco);
-  void changeListing(int listing) => tableKey.currentState!.changeListing(listing);
+  void changeListing(Listings listing) => tableKey.currentState!.changeListing(listing);
 
   String makeMdData() => tableKey.currentState?.makeMdData() ?? "";
 

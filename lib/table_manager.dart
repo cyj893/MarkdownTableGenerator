@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:markdown_table_generator/mouse_drag_selectable.dart';
 import 'dart:math';
 
+import 'my_enums.dart';
+
 import 'cell_helper.dart';
 import 'key_table.dart';
 import 'my_cell.dart';
@@ -140,7 +142,7 @@ class TableManagerState extends State<TableManager> {
     });
   }
 
-  void setAlignment(int alignment){
+  void setAlignment(Alignments alignment){
     if( isSelecting ){
       int t = selectedCells[0][0];
       for(int i = 0; i < selectedCells.length; i++){
@@ -176,7 +178,7 @@ class TableManagerState extends State<TableManager> {
     f(_keyTable.table[list[0]][list[1]]);
   }
 
-  void changeListing(int listing) {
+  void changeListing(Listings listing) {
     if( isSelecting ){
       for(int i = 0; i < selectedCells.length; i++){
         CellHelper.changeListing(_keyTable.table[selectedCells[i][0]][selectedCells[i][1]], listing);
@@ -202,15 +204,15 @@ class TableManagerState extends State<TableManager> {
       if( i == 0 ){
         mdData += "|";
         for(int j = 0; j < _keyTable.table[i].length; j++){
-          int alignment = CellHelper.getAlignment(_keyTable.table[i][j]);
+          Alignments alignment = CellHelper.getAlignment(_keyTable.table[i][j]);
           switch( alignment ){
-            case 0:
+            case Alignments.left:
               mdData += " :-- |";
               break;
-            case 1:
+            case Alignments.center:
               mdData += " :--: |";
               break;
-            case 2:
+            case Alignments.right:
               mdData += " --: |";
               break;
             default:
@@ -258,21 +260,18 @@ class TableManagerState extends State<TableManager> {
   }
 
   List<Offset> switchOffsets(Offset a, Offset b){
+/*
+a --------- b.dx,a.dy    a.dx,b.dy - b            b.dx,a.dy - a            b --------- a.dx,b.dy
+|           |            |           |            |           |            |           |
+a.dx,b.dy - b            a --------- b.dx,a.dy    b --------- a.dx,b.dy    b.dx,a.dy - a
+
+return
+s ---------
+|           |
+  --------- e
+*/
     Offset s = const Offset(0, 0);
     Offset e = const Offset(0, 0);
-    /*
-        a            b.dx, a.dy
-        a.dx, b.dy   b
-
-        a.dx, b.dy   b
-        a            b.dx, a.dy
-
-        b.dx, a.dy   a
-        b            a.dx, b.dy
-
-        b            a.dx, b.dy
-        b.dx, a.dy   a
-    */
     if( a.dx < b.dx ){
       if( a.dy < b.dy ){
         s = a;
@@ -296,35 +295,40 @@ class TableManagerState extends State<TableManager> {
     return [s, e];
   }
 
+  bool isCellInBox(Offset s, Offset e, int i, int j){
+    bool isCellStartInBoxXAxis = s.dx <= w[j] && w[j] <= e.dx;
+    bool isCellEndInBoxXAxis = s.dx <= w[j+1] && w[j+1] <= e.dx;
+    bool isCellInBoxXAxis = isCellStartInBoxXAxis || isCellEndInBoxXAxis;
+
+    bool isCellStartInBoxYAxis = s.dy <= h[i] && h[i] <= e.dy;
+    bool isCellEndInBoxYAxis = s.dy <= h[i+1] && h[i+1] <= e.dy;
+    bool isCellInBoxYAxis = isCellStartInBoxYAxis || isCellEndInBoxYAxis;
+
+    bool isBoxInCellXAxis = w[j] <= s.dx && e.dx <= w[j+1];
+    bool isBoxInCellYAxis = h[i] <= s.dy && e.dy <= h[i+1];
+
+    bool isCommonCase = isCellInBoxXAxis && isCellInBoxYAxis;
+    bool isBoxInColumn = isBoxInCellXAxis && isCellInBoxYAxis;
+    bool isBoxInRow = isCellInBoxXAxis && isBoxInCellYAxis;
+    bool isBoxInACell = isBoxInCellXAxis && isBoxInCellYAxis;
+
+    return isCommonCase || isBoxInColumn || isBoxInRow || isBoxInACell;
+  }
+
   void endSelecting(Offset startOffset, Offset nowOffset){
     List<Offset> switchedList = switchOffsets(startOffset, nowOffset);
-    Offset s = switchedList[0];
-    Offset e = switchedList[1];
+    Offset start = switchedList[0];
+    Offset end = switchedList[1];
 
-    List<List<int>> list = [];
+    selectedCells = [];
     for(int i = 0; i < _keyTable.rowLen; i++){
       for(int j = 0; j < _keyTable.colLen; j++){
-        if( ((s.dx <= w[j] && w[j] <= e.dx) || (s.dx <= w[j+1] && w[j+1] <= e.dx))
-            && ((s.dy <= h[i] && h[i] <= e.dy) || (s.dy <= h[i+1] && h[i+1] <= e.dy)) ){
-          list.add([i, j]);
-        } // common cases
-        else if( w[j] <= s.dx && e.dx <= w[j+1]
-            && ((s.dy <= h[i] && h[i] <= e.dy) || (s.dy <= h[i+1] && h[i+1] <= e.dy)) ){
-          list.add([i, j]);
-        } // box in cells in column
-        else if( ((s.dx <= w[j] && w[j] <= e.dx) || (s.dx <= w[j+1] && w[j+1] <= e.dx))
-            && h[i] <= s.dy && e.dy <= h[i+1] ){
-          list.add([i, j]);
-        } // box in cells in row
-        else if( w[j] <= s.dx && e.dx <= w[j+1] && h[i] <= s.dy && e.dy <= h[i+1] ){
-          list.add([i, j]);
-        } // box in cell
+        if( isCellInBox(start, end, i, j) ) selectedCells.add([i, j]);
       }
     }
 
-    selectedCells = list;
-    for(int i = 0; i < list.length; i++){
-      CellHelper.setFocusedColor(_keyTable.table[list[i][0]][list[i][1]], 2);
+    for(int i = 0; i < selectedCells.length; i++){
+      CellHelper.setFocusedColor(_keyTable.table[selectedCells[i][0]][selectedCells[i][1]], 2);
     }
   }
 
