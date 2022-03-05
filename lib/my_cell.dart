@@ -93,22 +93,28 @@ class MyCellState extends State<MyCell> {
   String getText() => _controller.text;
 
   String getMDText(){
-    if( _listing == 0 ){
-      String ret = _controller.text.replaceAll('\n', "<br>");
-
-      if( ret == "" ) return ret;
-      if( _codeColor == 1 ) ret = "`$ret`";
-      if( _fontWeight == 1 ) ret = "**$ret**";
-      if( _fontStyle == 1 ) ret = "_${ret}_";
-      if( _strike == 1 ) ret = "~~$ret~~";
-      return ret;
+    String ret = "";
+    if( _listing != 0 ){
+      ret = _listing == 1 ? "<ul>" : "<ol>";
+      List<String> list = _controller.text.split('\n');
+      for(int i = 0; i < list.length; i++){
+        if( _codeColor == 1 ){  // code deco should be inside
+          ret += "<li>`${list[i]}`</li>";
+        }
+        else{
+          ret += "<li>${list[i]}</li>";
+        }
+      }
+      ret += _listing == 1 ? "</ul>" : "</ol>";
     }
-    String ret = _listing == 1 ? "<ul>" : "<ol>";
-    List<String> list = _controller.text.split('\n');
-    for(int i = 0; i < list.length; i++){
-      ret += "<li>${list[i]}</li>";
+    else{
+      ret = _controller.text.replaceAll('\n', "<br>");
     }
-    ret += _listing == 1 ? "</ul>" : "</ol>";
+    if( ret == "" ) return ret;
+    if( _listing == 0 && _codeColor == 1 ) ret = "`$ret`";
+    if( _fontWeight == 1 ) ret = "**$ret**";
+    if( _fontStyle == 1 ) ret = "_${ret}_";
+    if( _strike == 1 ) ret = "~~$ret~~";
     return ret;
   }
 
