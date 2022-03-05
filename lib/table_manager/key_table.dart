@@ -1,6 +1,7 @@
 import 'dart:math';
 import 'package:flutter/material.dart';
 
+import 'package:markdown_table_generator/my_enums.dart';
 import 'my_cell.dart';
 import 'cell_helper.dart';
 import 'table_helper.dart';
@@ -35,16 +36,16 @@ class KeyTable {
   }
 
   List<int> findFocusedCell(){
-    List<int> ret = [];
+    List<int> pos = [];
     for(int i = 0; i < table.length; i++){
       for(int j = 0; j < table[i].length; j++){
         if( CellHelper.getKeyNum(table[i][j]) == focusedCellKey ){
-          ret = [i, j];
+          pos = [i, j];
           break;
         }
       }
     }
-    return ret;
+    return pos;
   }
 
   void setFocusedColor(){
@@ -56,13 +57,13 @@ class KeyTable {
     for(int i = 0; i < rowLen; i++){
       for(int j = 0; j < colLen; j++){
         if( i == list[0] && j == list[1] ){
-          CellHelper.setFocusedColor(table[i][j], 2);
+          CellHelper.setFocusedColor(table[i][j], FocusColor.focused);
         }
         else if( i == list[0] || j == list[1] ){
-          CellHelper.setFocusedColor(table[i][j], 1);
+          CellHelper.setFocusedColor(table[i][j], FocusColor.around);
         }
         else{
-          CellHelper.setFocusedColor(table[i][j], 0);
+          CellHelper.setFocusedColor(table[i][j], FocusColor.none);
         }
       }
     }
@@ -71,7 +72,7 @@ class KeyTable {
   void clearFocus(){
     for(int i = 0; i < rowLen; i++){
       for(int j = 0; j < colLen; j++){
-        CellHelper.setFocusedColor(table[i][j], 0);
+        CellHelper.setFocusedColor(table[i][j], FocusColor.none);
       }
     }
     focusedCellKey = -1;

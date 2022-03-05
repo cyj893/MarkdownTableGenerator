@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:markdown_table_generator/table_helper.dart';
 
+import 'package:markdown_table_generator/table_manager/table_helper.dart';
 import 'mouse_drag_box.dart';
 
 class MouseDragSelectable extends StatelessWidget {

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import 'my_enums.dart';
+import 'package:markdown_table_generator/my_enums.dart';
 import 'my_cell.dart';
 
 class CellHelper {
@@ -14,7 +14,7 @@ class CellHelper {
   static void setWidth(GlobalKey<MyCellState> cellKey, double width) => cellKey.currentState?.setWidth(width);
   static void setHeight(GlobalKey<MyCellState> cellKey, double height) => cellKey.currentState?.setHeight(height);
 
-  static void setFocusedColor(GlobalKey<MyCellState> cellKey, int focused) => cellKey.currentState?.setFocusedColor(focused);
+  static void setFocusedColor(GlobalKey<MyCellState> cellKey, FocusColor focused) => cellKey.currentState?.setFocusedColor(focused);
   static void changeAlignment(GlobalKey<MyCellState> cellKey, Alignments alignment) => cellKey.currentState?.changeAlignment(alignment);
   static void changeBold(GlobalKey<MyCellState> cellKey) => cellKey.currentState?.changeBold();
   static void changeItalic(GlobalKey<MyCellState> cellKey) => cellKey.currentState?.changeItalic();

@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:markdown_table_generator/menus/listing_btn.dart';
 
-import 'my_div.dart';
-import 'menus/row_btn.dart';
-import 'menus/col_btn.dart';
-import 'menus/align_btn.dart';
-import 'menus/text_deco_btn.dart';
+import '../my_div.dart';
+import 'row_btn.dart';
+import 'col_btn.dart';
+import 'align_btn.dart';
+import 'text_deco_btn.dart';
 
 class TableMenu extends StatelessWidget {
 

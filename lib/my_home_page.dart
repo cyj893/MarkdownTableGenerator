@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 
 import 'my_div.dart';
-import 'table_helper.dart';
-import 'table_menu.dart';
+import 'table_manager/table_helper.dart';
+import 'menus/table_menu.dart';
 import 'show_res.dart';
 
 class MyHomePage extends StatefulWidget {

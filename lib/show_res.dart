@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
-import 'table_helper.dart';
+import 'table_manager/table_helper.dart';
 
 class ShowRes extends StatefulWidget {
 

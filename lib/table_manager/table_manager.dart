@@ -1,9 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:markdown_table_generator/mouse_drag_selectable.dart';
 import 'dart:math';
 
-import 'my_enums.dart';
-
+import 'package:markdown_table_generator/my_enums.dart';
+import 'mouse_drag_selectable/mouse_drag_selectable.dart';
 import 'cell_helper.dart';
 import 'key_table.dart';
 import 'my_cell.dart';
@@ -42,13 +41,7 @@ class TableManagerState extends State<TableManager> {
     }
   }
 
-  void insertRow(int location){
-    List<int> list = _keyTable.findFocusedCell();
-    if( list.isEmpty ){
-      debugPrint("Error insertRow");
-      return ;
-    }
-
+  List<double> getWidthMaxList(){
     List<double> maxList = [];
     for(int i = 0; i < _keyTable.colLen; i++){
       double maxWidth = 120.0;
@@ -57,13 +50,23 @@ class TableManagerState extends State<TableManager> {
       }
       maxList.add(maxWidth);
     }
+    return maxList;
+  }
+
+  void insertRow(int location){
+    List<int> pos = _keyTable.findFocusedCell();
+    if( pos.isEmpty ){
+      debugPrint("Error insertRow");
+      return ;
+    }
+    List<double> maxList = getWidthMaxList();
     setState(() {
-      _keyTable.table.insert(list[0]+location, List.generate(_keyTable.colLen, (i) => GlobalKey()));
-      cellTable.insert(list[0]+location, List.generate(_keyTable.colLen, (j) {
+      _keyTable.table.insert(pos[0]+location, List.generate(_keyTable.colLen, (i) => GlobalKey()));
+      cellTable.insert(pos[0]+location, List.generate(_keyTable.colLen, (j) {
         return MyCell(
-          key: _keyTable.table[list[0]+location][j],
+          key: _keyTable.table[pos[0]+location][j],
           initialWidth: maxList[j],
-          initialFocused: j == list[1] ? 1 : 0,
+          initialFocused: j == pos[1] ? FocusColor.around : FocusColor.none,
         );
       }));
       _keyTable.printKeyTable();
@@ -72,32 +75,24 @@ class TableManagerState extends State<TableManager> {
   }
 
   void deleteRow(){
-    List<int> list = _keyTable.findFocusedCell();
-    if( list.isEmpty ){
+    if( _keyTable.rowLen == 1 ) return ;
+    List<int> pos = _keyTable.findFocusedCell();
+    if( pos.isEmpty ){
       debugPrint("Error deleteRow");
       return ;
     }
-
-    if( _keyTable.rowLen == 1 ) return ;
     setState(() {
-      _keyTable.table.removeAt(list[0]);
-      cellTable.removeAt(list[0]);
+      _keyTable.table.removeAt(pos[0]);
+      cellTable.removeAt(pos[0]);
       _keyTable.printKeyTable();
       _keyTable.rowLen--;
-
       for(int i = 0; i < _keyTable.colLen; i++){
         _keyTable.resizeTableWidth(i);
       }
     });
   }
 
-  void insertColumn(int location){
-    List<int> list = _keyTable.findFocusedCell();
-    if( list.isEmpty ){
-      debugPrint("Error insertColumn");
-      return ;
-    }
-
+  List<double> getHeightMaxList(){
     List<double> maxList = [];
     for(int i = 0; i < _keyTable.rowLen; i++){
       double maxHeight = 72.0;
@@ -106,13 +101,23 @@ class TableManagerState extends State<TableManager> {
       }
       maxList.add(maxHeight);
     }
+    return maxList;
+  }
+
+  void insertColumn(int location){
+    List<int> pos = _keyTable.findFocusedCell();
+    if( pos.isEmpty ){
+      debugPrint("Error insertColumn");
+      return ;
+    }
+    List<double> maxList = getHeightMaxList();
     setState(() {
       for(int i = 0; i < _keyTable.rowLen; i++){
-        _keyTable.table[i].insert(list[1]+location, GlobalKey());
-        cellTable[i].insert(list[1]+location, MyCell(
-            key: _keyTable.table[i][list[1]+location],
+        _keyTable.table[i].insert(pos[1]+location, GlobalKey());
+        cellTable[i].insert(pos[1]+location, MyCell(
+            key: _keyTable.table[i][pos[1]+location],
             initialHeight: maxList[i],
-            initialFocused: i == list[0] ? 1 : 0,
+            initialFocused: i == pos[0] ? FocusColor.around : FocusColor.none,
         ));
       }
       _keyTable.printKeyTable();
@@ -121,21 +126,19 @@ class TableManagerState extends State<TableManager> {
   }
 
   void deleteColumn(){
-    List<int> list = _keyTable.findFocusedCell();
-    if( list.isEmpty ){
+    if( _keyTable.colLen == 1 ) return ;
+    List<int> pos = _keyTable.findFocusedCell();
+    if( pos.isEmpty ){
       debugPrint("Error deleteColumn");
       return ;
     }
-
-    if( _keyTable.colLen == 1 ) return ;
     setState(() {
       for(int i = 0; i < _keyTable.rowLen; i++){
-        _keyTable.table[i].removeAt(list[1]);
-        cellTable[i].removeAt(list[1]);
+        _keyTable.table[i].removeAt(pos[1]);
+        cellTable[i].removeAt(pos[1]);
       }
       _keyTable.printKeyTable();
       _keyTable.colLen--;
-
       for(int i = 0; i < _keyTable.rowLen; i++){
         _keyTable.resizeTableHeight(i);
       }
@@ -153,29 +156,29 @@ class TableManagerState extends State<TableManager> {
       }
       return ;
     }
-    List<int> list = _keyTable.findFocusedCell();
-    if( list.isEmpty ){
+    List<int> pos = _keyTable.findFocusedCell();
+    if( pos.isEmpty ){
       debugPrint("Error setAlignment");
       return ;
     }
     for(int i = 0; i < _keyTable.rowLen; i++){
-      CellHelper.changeAlignment(_keyTable.table[i][list[1]], alignment);
+      CellHelper.changeAlignment(_keyTable.table[i][pos[1]], alignment);
     }
   }
 
-  void changeCellDeco(Function f) {
+  void changeCellDeco(Function func) {
     if( isSelecting ){
       for(int i = 0; i < selectedCells.length; i++){
-        f(_keyTable.table[selectedCells[i][0]][selectedCells[i][1]]);
+        func(_keyTable.table[selectedCells[i][0]][selectedCells[i][1]]);
       }
       return ;
     }
-    List<int> list = _keyTable.findFocusedCell();
-    if( list.isEmpty ){
-      debugPrint("Error changeCellDeco: $f");
+    List<int> pos = _keyTable.findFocusedCell();
+    if( pos.isEmpty ){
+      debugPrint("Error changeCellDeco: $func");
       return ;
     }
-    f(_keyTable.table[list[0]][list[1]]);
+    func(_keyTable.table[pos[0]][pos[1]]);
   }
 
   void changeListing(Listings listing) {
@@ -185,12 +188,34 @@ class TableManagerState extends State<TableManager> {
       }
       return ;
     }
-    List<int> list = _keyTable.findFocusedCell();
-    if( list.isEmpty ){
+    List<int> pos = _keyTable.findFocusedCell();
+    if( pos.isEmpty ){
       debugPrint("Error changeListing");
       return ;
     }
-    CellHelper.changeListing(_keyTable.table[list[0]][list[1]], listing);
+    CellHelper.changeListing(_keyTable.table[pos[0]][pos[1]], listing);
+  }
+
+  String makeTableHeader(){
+    String header = "|";
+    for(int j = 0; j < _keyTable.colLen; j++) {
+      Alignments alignment = CellHelper.getAlignment(_keyTable.table[0][j]);
+      switch (alignment) {
+        case Alignments.left:
+          header += " :-- |";
+          break;
+        case Alignments.center:
+          header += " :--: |";
+          break;
+        case Alignments.right:
+          header += " --: |";
+          break;
+        default:
+          debugPrint("makeMdData Error");
+      }
+    }
+    header += "\n";
+    return header;
   }
 
   String makeMdData(){
@@ -201,26 +226,7 @@ class TableManagerState extends State<TableManager> {
         mdData += " ${CellHelper.getMDText(_keyTable.table[i][j])}\t |";
       }
       mdData += "\n";
-      if( i == 0 ){
-        mdData += "|";
-        for(int j = 0; j < _keyTable.table[i].length; j++){
-          Alignments alignment = CellHelper.getAlignment(_keyTable.table[i][j]);
-          switch( alignment ){
-            case Alignments.left:
-              mdData += " :-- |";
-              break;
-            case Alignments.center:
-              mdData += " :--: |";
-              break;
-            case Alignments.right:
-              mdData += " --: |";
-              break;
-            default:
-              debugPrint("makeMdData Error");
-          }
-        }
-        mdData += "\n";
-      }
+      if( i == 0 ) mdData += makeTableHeader();
     }
     return mdData;
   }
@@ -328,7 +334,7 @@ s ---------
     }
 
     for(int i = 0; i < selectedCells.length; i++){
-      CellHelper.setFocusedColor(_keyTable.table[selectedCells[i][0]][selectedCells[i][1]], 2);
+      CellHelper.setFocusedColor(_keyTable.table[selectedCells[i][0]][selectedCells[i][1]], FocusColor.focused);
     }
   }
 
@@ -337,9 +343,9 @@ s ---------
     debugPrint("Build 0");
     return MouseDragSelectable(
         child: Column(
-          children: List.generate(
-              _keyTable.rowLen, (i) => Row(
-            children: List.generate(_keyTable.colLen, (j) => cellTable[i][j]),)),
+          children: List.generate(_keyTable.rowLen, (i) => Row(
+            children: List.generate(_keyTable.colLen, (j) => cellTable[i][j]),
+          )),
         )
     );
   }
