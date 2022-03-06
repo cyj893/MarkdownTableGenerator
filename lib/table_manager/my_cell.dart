@@ -167,6 +167,7 @@ class MyCellState extends State<MyCell> {
     if( _fontWeight == 1 ) ret = "**$ret**";
     if( _fontStyle == 1 ) ret = "_${ret}_";
     if( _strike == 1 ) ret = "~~$ret~~";
+    if( _isLink == 1 ) ret = "[$ret](${_linkController.text})";
     return ret;
   }
 
