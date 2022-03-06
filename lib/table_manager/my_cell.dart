@@ -36,7 +36,8 @@ class MyCellState extends State<MyCell> {
   int linesNum = 1;
 
   final TextEditingController _listingController = TextEditingController();
-  final TextEditingController _controller = TextEditingController();
+  final TextEditingController _linkController = TextEditingController();
+  final TextEditingController _textController = TextEditingController();
   final FocusNode _focusNode = FocusNode();
 
   String unorderedListingStr = "●";
@@ -69,7 +70,7 @@ class MyCellState extends State<MyCell> {
     _focused = widget.initialFocused;
     _focusNode.addListener(() {
       if( _focusNode.hasFocus ){
-        debugPrint("Focus on $cellKey: \"${_controller.text}\"");
+        debugPrint("Focus on $cellKey: \"${_textController.text}\"");
         _keyTable.setFocusedCellKey(cellKey);
       }
     });
@@ -132,19 +133,22 @@ class MyCellState extends State<MyCell> {
         .size;
   }
 
-  Size getSize() => getTextSize(_controller.text, TextStyle(
+  TextStyle _makeTextStyle() => TextStyle(
     fontSize: 16,
     fontWeight: _fontWeights[_fontWeight],
     fontStyle: _fontStyles[_fontStyle],
     decoration: _textDecorations[_strike],
     backgroundColor: _backgroundColors[_codeColor],
-  ));
+    color: _textColors[_isLink],
+  );
+
+  Size getSize() => getTextSize(_textController.text, _makeTextStyle());
 
   double getHeight() => _textHeight * linesNum + 50;
 
   String makeListingHTML(){
     String ret = _listing == Listings.unordered ? "<ul>" : "<ol>";
-    List<String> list = _controller.text.split('\n');
+    List<String> list = _textController.text.split('\n');
     for(int i = 0; i < list.length; i++){
       if( _codeColor == 1 ){  // code deco should be inside
         ret += "<li>`${list[i]}`</li>";
@@ -161,7 +165,7 @@ class MyCellState extends State<MyCell> {
     String ret = "";
     ret = _listing != Listings.none
         ? makeListingHTML()
-        : _controller.text.replaceAll('\n', "<br>");
+        : _textController.text.replaceAll('\n', "<br>");
     if( ret == "" ) return ret;
     if( _listing == Listings.none && _codeColor == 1 ) ret = "`$ret`";
     if( _fontWeight == 1 ) ret = "**$ret**";
@@ -174,8 +178,8 @@ class MyCellState extends State<MyCell> {
   Alignments getAlignment() => _alignment;
 
   void addListing(int changedLinesNum){
-    unorderedListingStr +=  "\n●";
     for(int i = linesNum+1; i <= changedLinesNum; i++){
+      unorderedListingStr +=  "\n●";
       orderedListingStr +=  "\n$i.";
     }
   }
@@ -216,6 +220,30 @@ class MyCellState extends State<MyCell> {
     _keyTable.resizeTableWidth(indexes[1]);
   }
 
+  Widget makeListingField() => SizedBox(
+      width: _listing != Listings.none ? 20 : 0,
+      child: TextField(
+        keyboardType: TextInputType.multiline,
+        maxLines: null,
+        controller: _listingController,
+        enabled: false,
+      )
+  );
+
+  Widget makeTextField() => TextField(
+    keyboardType: TextInputType.multiline,
+    maxLines: null,
+    controller: _textController,
+    focusNode: _focusNode,
+    onChanged: (string) {
+      debugPrint("string: $string");
+      checkHeightChanged(string);
+      checkWidthChanged(string);
+    },
+    textAlign: _alignments[_listing != Listings.none ? 0 : _alignment.index],
+    style: _makeTextStyle(),
+  );
+
   Container buildCell(){
     return Container(
       decoration: BoxDecoration(
@@ -228,62 +256,31 @@ class MyCellState extends State<MyCell> {
       alignment: Alignment.center,
       child: Row(
         children: [
-          SizedBox(
-              width: _listing != Listings.none ? 20 : 0,
-              child: TextField(
-                keyboardType: TextInputType.multiline,
-                maxLines: null,
-                controller: _listingController,
-                enabled: false,
-              )
-          ),
-          Expanded(
-              child: TextField(
-                keyboardType: TextInputType.multiline,
-                maxLines: null,
-                controller: _controller,
-                focusNode: _focusNode,
-                onChanged: (string) {
-                  debugPrint("string: $string");
-                  checkHeightChanged(string);
-                  checkWidthChanged(string);
-                },
-                textAlign: _alignments[_listing != Listings.none ? 0 : _alignment.index],
-                style: TextStyle(
-                  fontSize: 16,
-                  fontWeight: _fontWeights[_fontWeight],
-                  fontStyle: _fontStyles[_fontStyle],
-                  decoration: _textDecorations[_strike],
-                  backgroundColor: _backgroundColors[_codeColor],
-                  color: _textColors[_isLink],
-                ),
-              )
-          )
+          makeListingField(),
+          Expanded(child: makeTextField()),
         ],
       ),
     );
   }
 
-  TextEditingController _linkController = TextEditingController();
   Widget makeLinkBtn(){
     return _isLink == 0
         ? const SizedBox.shrink()
         : Positioned.fill(
-      child:Align(
-        alignment: Alignment.topRight,
-        child: InputLinkInkWell(
-          controller: _linkController,
-          width: 200,
-          onReturn: () {
-            print("Return: ${_linkController.text}");
-          },
-          child: const SizedBox(
-            width: 20, height: 20,
-            child: Icon(Icons.link_rounded, size: 16, color: Colors.grey,),
+          child:Align(
+            alignment: Alignment.topRight,
+            child: InputLinkInkWell(
+              controller: _linkController,
+              width: 200,
+              onReturn: () { debugPrint("Return: ${_linkController.text}"); },
+              child: const SizedBox(
+                width: 20,
+                height: 20,
+                child: Icon(Icons.link_rounded, size: 16, color: Colors.grey,),
+              ),
+            ),
           ),
-        ),
-      ),
-    );
+        );
   }
 
   @override

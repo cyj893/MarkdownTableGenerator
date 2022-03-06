@@ -45,9 +45,7 @@ class InputLinkInkWellState extends State<InputLinkInkWell> {
             Expanded(
               child: TextField(
                 controller: widget.controller,
-                decoration: const InputDecoration(
-                    hintText: "Put Your Link"
-                ),
+                decoration: const InputDecoration(hintText: "Put Your Link"),
               ),
             ),
             IconButton(
