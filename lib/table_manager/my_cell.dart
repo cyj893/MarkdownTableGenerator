@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import 'package:markdown_table_generator/my_enums.dart';
+import 'package:markdown_table_generator/table_manager/input_link_inkwell.dart';
 import 'cell_key_generator.dart';
 import 'key_table.dart';
 
@@ -47,6 +48,7 @@ class MyCellState extends State<MyCell> {
   int _fontStyle = 0;
   int _strike = 0;
   int _codeColor = 0;
+  int _isLink = 0;
   Listings _listing = Listings.none;
 
   final List<Color> _focusedColors = [Colors.white, Colors.blue[50]!.withOpacity(0.3), Colors.blue[50]!];
@@ -54,7 +56,8 @@ class MyCellState extends State<MyCell> {
   final List<FontWeight> _fontWeights = [FontWeight.normal, FontWeight.bold];
   final List<FontStyle> _fontStyles = [FontStyle.normal, FontStyle.italic];
   final List<TextDecoration> _textDecorations = [TextDecoration.none, TextDecoration.lineThrough];
-  final List<Color> _colors = [Colors.white.withOpacity(0.0), Colors.grey.withOpacity(0.3)];
+  final List<Color> _backgroundColors = [Colors.white.withOpacity(0.0), Colors.grey.withOpacity(0.3)];
+  final List<Color> _textColors = [Colors.black87, Colors.blueAccent];
 
   @override
   void initState(){
@@ -95,9 +98,10 @@ class MyCellState extends State<MyCell> {
   void changeItalic() => setState(() { _fontStyle = 1 - _fontStyle; });
   void changeStrike() => setState(() { _strike = 1 - _strike; });
   void changeCode() => setState(() { _codeColor = 1 - _codeColor; });
+  void changeLink() => setState(() { _isLink = 1 - _isLink; });
 
   void clearDeco(){
-    if( _fontWeight == 0 && _fontStyle == 0 && _strike == 0 && _codeColor == 0 ) return ;
+    if( _fontWeight == 0 && _fontStyle == 0 && _strike == 0 && _codeColor == 0 && _isLink == 0 ) return ;
     setState(() {
       _fontWeight = 0;
       _fontStyle = 0;
@@ -133,7 +137,7 @@ class MyCellState extends State<MyCell> {
     fontWeight: _fontWeights[_fontWeight],
     fontStyle: _fontStyles[_fontStyle],
     decoration: _textDecorations[_strike],
-    backgroundColor: _colors[_codeColor],
+    backgroundColor: _backgroundColors[_codeColor],
   ));
 
   double getHeight() => _textHeight * linesNum + 50;
@@ -211,9 +215,7 @@ class MyCellState extends State<MyCell> {
     _keyTable.resizeTableWidth(indexes[1]);
   }
 
-  @override
-  Widget build(BuildContext context) {
-    _textHeight = getSize().height;
+  Container buildCell(){
     return Container(
       decoration: BoxDecoration(
         color: _focusedColors[_focused.index],
@@ -226,37 +228,71 @@ class MyCellState extends State<MyCell> {
       child: Row(
         children: [
           SizedBox(
-            width: _listing != Listings.none ? 20 : 0,
-            child: TextField(
-              keyboardType: TextInputType.multiline,
-              maxLines: null,
-              controller: _listingController,
-              enabled: false,
-            )
+              width: _listing != Listings.none ? 20 : 0,
+              child: TextField(
+                keyboardType: TextInputType.multiline,
+                maxLines: null,
+                controller: _listingController,
+                enabled: false,
+              )
           ),
           Expanded(
-            child: TextField(
-              keyboardType: TextInputType.multiline,
-              maxLines: null,
-              controller: _controller,
-              focusNode: _focusNode,
-              onChanged: (string) {
-                debugPrint("string: $string");
-                checkHeightChanged(string);
-                checkWidthChanged(string);
-              },
-              textAlign: _alignments[_listing != Listings.none ? 0 : _alignment.index],
-              style: TextStyle(
-                fontSize: 16,
-                fontWeight: _fontWeights[_fontWeight],
-                fontStyle: _fontStyles[_fontStyle],
-                decoration: _textDecorations[_strike],
-                backgroundColor: _colors[_codeColor],
-              ),
-            )
+              child: TextField(
+                keyboardType: TextInputType.multiline,
+                maxLines: null,
+                controller: _controller,
+                focusNode: _focusNode,
+                onChanged: (string) {
+                  debugPrint("string: $string");
+                  checkHeightChanged(string);
+                  checkWidthChanged(string);
+                },
+                textAlign: _alignments[_listing != Listings.none ? 0 : _alignment.index],
+                style: TextStyle(
+                  fontSize: 16,
+                  fontWeight: _fontWeights[_fontWeight],
+                  fontStyle: _fontStyles[_fontStyle],
+                  decoration: _textDecorations[_strike],
+                  backgroundColor: _backgroundColors[_codeColor],
+                  color: _textColors[_isLink],
+                ),
+              )
           )
         ],
       ),
+    );
+  }
+
+  TextEditingController _linkController = TextEditingController();
+  Widget makeLinkBtn(){
+    return _isLink == 0
+        ? const SizedBox.shrink()
+        : Positioned.fill(
+      child:Align(
+        alignment: Alignment.topRight,
+        child: InputLinkInkWell(
+          controller: _linkController,
+          width: 200,
+          onReturn: () {
+            print("Return: ${_linkController.text}");
+          },
+          child: const SizedBox(
+            width: 20, height: 20,
+            child: Icon(Icons.link_rounded, size: 16, color: Colors.grey,),
+          ),
+        ),
+      ),
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    _textHeight = getSize().height;
+    return Stack(
+      children: [
+        buildCell(),
+        makeLinkBtn(),
+      ],
     );
   }
 

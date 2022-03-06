@@ -33,6 +33,11 @@ class TextDecoBtn extends StatelessWidget {
             icon: const Icon(Icons.code_rounded)),
         verticalDiv(10),
         IconButton(
+            tooltip: "link",
+            onPressed: () { tableHelper.changeCellLink(); },
+            icon: const Icon(Icons.link_rounded)),
+        verticalDiv(10),
+        IconButton(
             tooltip: "clear",
             onPressed: () { tableHelper.clearCellDeco(); },
             icon: const Icon(Icons.clear_rounded)),

@@ -26,6 +26,7 @@ class TableHelper {
   void changeCellItalic() => tableKey.currentState!.changeCellDeco(CellHelper.changeItalic);
   void changeCellStrike() => tableKey.currentState!.changeCellDeco(CellHelper.changeStrike);
   void changeCellCode() => tableKey.currentState!.changeCellDeco(CellHelper.changeCode);
+  void changeCellLink() => tableKey.currentState!.changeCellDeco(CellHelper.changeLink);
   void clearCellDeco() => tableKey.currentState!.changeCellDeco(CellHelper.clearDeco);
   void changeListing(Listings listing) => tableKey.currentState!.changeListing(listing);
 
