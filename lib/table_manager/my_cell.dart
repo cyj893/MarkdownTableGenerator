@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import 'package:markdown_table_generator/my_enums.dart';
+import 'package:markdown_table_generator/table_manager/input_link_inkwell.dart';
 import 'cell_key_generator.dart';
 import 'key_table.dart';
 
@@ -35,7 +36,8 @@ class MyCellState extends State<MyCell> {
   int linesNum = 1;
 
   final TextEditingController _listingController = TextEditingController();
-  final TextEditingController _controller = TextEditingController();
+  final TextEditingController _linkController = TextEditingController();
+  final TextEditingController _textController = TextEditingController();
   final FocusNode _focusNode = FocusNode();
 
   String unorderedListingStr = "●";
@@ -47,6 +49,7 @@ class MyCellState extends State<MyCell> {
   int _fontStyle = 0;
   int _strike = 0;
   int _codeColor = 0;
+  int _isLink = 0;
   Listings _listing = Listings.none;
 
   final List<Color> _focusedColors = [Colors.white, Colors.blue[50]!.withOpacity(0.3), Colors.blue[50]!];
@@ -54,7 +57,8 @@ class MyCellState extends State<MyCell> {
   final List<FontWeight> _fontWeights = [FontWeight.normal, FontWeight.bold];
   final List<FontStyle> _fontStyles = [FontStyle.normal, FontStyle.italic];
   final List<TextDecoration> _textDecorations = [TextDecoration.none, TextDecoration.lineThrough];
-  final List<Color> _colors = [Colors.white.withOpacity(0.0), Colors.grey.withOpacity(0.3)];
+  final List<Color> _backgroundColors = [Colors.white.withOpacity(0.0), Colors.grey.withOpacity(0.3)];
+  final List<Color> _textColors = [Colors.black87, Colors.blueAccent];
 
   @override
   void initState(){
@@ -66,7 +70,7 @@ class MyCellState extends State<MyCell> {
     _focused = widget.initialFocused;
     _focusNode.addListener(() {
       if( _focusNode.hasFocus ){
-        debugPrint("Focus on $cellKey: \"${_controller.text}\"");
+        debugPrint("Focus on $cellKey: \"${_textController.text}\"");
         _keyTable.setFocusedCellKey(cellKey);
       }
     });
@@ -95,9 +99,10 @@ class MyCellState extends State<MyCell> {
   void changeItalic() => setState(() { _fontStyle = 1 - _fontStyle; });
   void changeStrike() => setState(() { _strike = 1 - _strike; });
   void changeCode() => setState(() { _codeColor = 1 - _codeColor; });
+  void changeLink() => setState(() { _isLink = 1 - _isLink; });
 
   void clearDeco(){
-    if( _fontWeight == 0 && _fontStyle == 0 && _strike == 0 && _codeColor == 0 ) return ;
+    if( _fontWeight == 0 && _fontStyle == 0 && _strike == 0 && _codeColor == 0 && _isLink == 0 ) return ;
     setState(() {
       _fontWeight = 0;
       _fontStyle = 0;
@@ -128,19 +133,22 @@ class MyCellState extends State<MyCell> {
         .size;
   }
 
-  Size getSize() => getTextSize(_controller.text, TextStyle(
+  TextStyle _makeTextStyle() => TextStyle(
     fontSize: 16,
     fontWeight: _fontWeights[_fontWeight],
     fontStyle: _fontStyles[_fontStyle],
     decoration: _textDecorations[_strike],
-    backgroundColor: _colors[_codeColor],
-  ));
+    backgroundColor: _backgroundColors[_codeColor],
+    color: _textColors[_isLink],
+  );
+
+  Size getSize() => getTextSize(_textController.text, _makeTextStyle());
 
   double getHeight() => _textHeight * linesNum + 50;
 
   String makeListingHTML(){
     String ret = _listing == Listings.unordered ? "<ul>" : "<ol>";
-    List<String> list = _controller.text.split('\n');
+    List<String> list = _textController.text.split('\n');
     for(int i = 0; i < list.length; i++){
       if( _codeColor == 1 ){  // code deco should be inside
         ret += "<li>`${list[i]}`</li>";
@@ -157,20 +165,21 @@ class MyCellState extends State<MyCell> {
     String ret = "";
     ret = _listing != Listings.none
         ? makeListingHTML()
-        : _controller.text.replaceAll('\n', "<br>");
+        : _textController.text.replaceAll('\n', "<br>");
     if( ret == "" ) return ret;
     if( _listing == Listings.none && _codeColor == 1 ) ret = "`$ret`";
     if( _fontWeight == 1 ) ret = "**$ret**";
     if( _fontStyle == 1 ) ret = "_${ret}_";
     if( _strike == 1 ) ret = "~~$ret~~";
+    if( _isLink == 1 ) ret = "[$ret](${_linkController.text})";
     return ret;
   }
 
   Alignments getAlignment() => _alignment;
 
   void addListing(int changedLinesNum){
-    unorderedListingStr +=  "\n●";
     for(int i = linesNum+1; i <= changedLinesNum; i++){
+      unorderedListingStr +=  "\n●";
       orderedListingStr +=  "\n$i.";
     }
   }
@@ -211,9 +220,31 @@ class MyCellState extends State<MyCell> {
     _keyTable.resizeTableWidth(indexes[1]);
   }
 
-  @override
-  Widget build(BuildContext context) {
-    _textHeight = getSize().height;
+  Widget makeListingField() => SizedBox(
+      width: _listing != Listings.none ? 20 : 0,
+      child: TextField(
+        keyboardType: TextInputType.multiline,
+        maxLines: null,
+        controller: _listingController,
+        enabled: false,
+      )
+  );
+
+  Widget makeTextField() => TextField(
+    keyboardType: TextInputType.multiline,
+    maxLines: null,
+    controller: _textController,
+    focusNode: _focusNode,
+    onChanged: (string) {
+      debugPrint("string: $string");
+      checkHeightChanged(string);
+      checkWidthChanged(string);
+    },
+    textAlign: _alignments[_listing != Listings.none ? 0 : _alignment.index],
+    style: _makeTextStyle(),
+  );
+
+  Container buildCell(){
     return Container(
       decoration: BoxDecoration(
         color: _focusedColors[_focused.index],
@@ -225,38 +256,41 @@ class MyCellState extends State<MyCell> {
       alignment: Alignment.center,
       child: Row(
         children: [
-          SizedBox(
-            width: _listing != Listings.none ? 20 : 0,
-            child: TextField(
-              keyboardType: TextInputType.multiline,
-              maxLines: null,
-              controller: _listingController,
-              enabled: false,
-            )
-          ),
-          Expanded(
-            child: TextField(
-              keyboardType: TextInputType.multiline,
-              maxLines: null,
-              controller: _controller,
-              focusNode: _focusNode,
-              onChanged: (string) {
-                debugPrint("string: $string");
-                checkHeightChanged(string);
-                checkWidthChanged(string);
-              },
-              textAlign: _alignments[_listing != Listings.none ? 0 : _alignment.index],
-              style: TextStyle(
-                fontSize: 16,
-                fontWeight: _fontWeights[_fontWeight],
-                fontStyle: _fontStyles[_fontStyle],
-                decoration: _textDecorations[_strike],
-                backgroundColor: _colors[_codeColor],
-              ),
-            )
-          )
+          makeListingField(),
+          Expanded(child: makeTextField()),
         ],
       ),
+    );
+  }
+
+  Widget makeLinkBtn(){
+    return _isLink == 0
+        ? const SizedBox.shrink()
+        : Positioned.fill(
+          child:Align(
+            alignment: Alignment.topRight,
+            child: InputLinkInkWell(
+              controller: _linkController,
+              width: 200,
+              onReturn: () { debugPrint("Return: ${_linkController.text}"); },
+              child: const SizedBox(
+                width: 20,
+                height: 20,
+                child: Icon(Icons.link_rounded, size: 16, color: Colors.grey,),
+              ),
+            ),
+          ),
+        );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    _textHeight = getSize().height;
+    return Stack(
+      children: [
+        buildCell(),
+        makeLinkBtn(),
+      ],
     );
   }
 

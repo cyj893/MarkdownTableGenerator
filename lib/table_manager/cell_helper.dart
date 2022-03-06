@@ -20,6 +20,7 @@ class CellHelper {
   static void changeItalic(GlobalKey<MyCellState> cellKey) => cellKey.currentState?.changeItalic();
   static void changeStrike(GlobalKey<MyCellState> cellKey) => cellKey.currentState?.changeStrike();
   static void changeCode(GlobalKey<MyCellState> cellKey) => cellKey.currentState?.changeCode();
+  static void changeLink(GlobalKey<MyCellState> cellKey) => cellKey.currentState?.changeLink();
   static void clearDeco(GlobalKey<MyCellState> cellKey) => cellKey.currentState?.clearDeco();
   static void changeListing(GlobalKey<MyCellState> cellKey, Listings listing) => cellKey.currentState?.changeListing(listing);
 
