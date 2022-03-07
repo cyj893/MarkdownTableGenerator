@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:markdown_table_generator/table_manager/key_table.dart';
 
-import '../file_drag_and_drop.dart';
+import 'package:markdown_table_generator/table_manager/key_table.dart';
+import 'file_drag_and_drop.dart';
 
 class ReadCsvBtn extends StatelessWidget {
 

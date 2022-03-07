@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 
-
 class InputLinkInkWell extends StatefulWidget {
   final TextEditingController controller;
   final double width;

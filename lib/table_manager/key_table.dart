@@ -2,8 +2,8 @@ import 'dart:math';
 import 'package:flutter/material.dart';
 
 import 'package:markdown_table_generator/my_enums.dart';
-import 'my_cell.dart';
-import 'cell_helper.dart';
+import 'cell/my_cell.dart';
+import 'cell/cell_helper.dart';
 import 'table_helper.dart';
 
 class KeyTable {

@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 
 import 'package:markdown_table_generator/my_enums.dart';
-import 'package:markdown_table_generator/table_manager/input_link_inkwell.dart';
+import 'input_link_inkwell.dart';
 import 'cell_key_generator.dart';
-import 'key_table.dart';
+import '../key_table.dart';
 
 class MyCell extends StatefulWidget {
 

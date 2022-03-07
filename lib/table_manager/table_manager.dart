@@ -5,9 +5,9 @@ import 'dart:math';
 
 import 'package:markdown_table_generator/my_enums.dart';
 import 'mouse_drag_selectable/mouse_drag_selectable.dart';
-import 'cell_helper.dart';
+import 'cell/cell_helper.dart';
 import 'key_table.dart';
-import 'my_cell.dart';
+import 'cell/my_cell.dart';
 
 class TableManager extends StatefulWidget {
 

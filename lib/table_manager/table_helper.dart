@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:markdown_table_generator/my_enums.dart';
 
 import 'table_manager.dart';
-import 'cell_helper.dart';
+import 'cell/cell_helper.dart';
 
 class TableHelper {
   static final TableHelper _tableHelperInstance = TableHelper._internal();

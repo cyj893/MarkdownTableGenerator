@@ -39,9 +39,11 @@ class ShowResState extends State<ShowRes> {
       children: [
         const Text("Result", style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),),
         IconButton(
+            tooltip: "refresh",
             onPressed: () { setState((){ mdData = tableHelper.makeMdData(); }); },
             icon: const Icon(Icons.refresh_rounded)),
         IconButton(
+            tooltip: "copy",
             onPressed: () { debugPrint("copied"); Clipboard.setData(ClipboardData(text: mdData)); },
             icon: const Icon(Icons.file_copy_rounded)),
       ],

@@ -3,9 +3,9 @@ import 'package:desktop_drop/desktop_drop.dart';
 import 'package:cross_file/cross_file.dart';
 import 'package:file_picker/file_picker.dart';
 import 'dart:typed_data';
-import 'package:markdown_table_generator/csv_converter.dart';
 
-import 'table_manager/table_helper.dart';
+import 'package:markdown_table_generator/csv_converter.dart';
+import 'package:markdown_table_generator/table_manager/table_helper.dart';
 
 class FileDragAndDrop extends StatefulWidget {
   const FileDragAndDrop({Key? key}) : super(key: key);
