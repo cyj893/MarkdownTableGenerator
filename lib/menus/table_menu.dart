@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:markdown_table_generator/menus/listing_btn.dart';
 
 import '../my_div.dart';
+import 'read_csv_btn.dart';
 import 'row_btn.dart';
 import 'col_btn.dart';
 import 'align_btn.dart';
@@ -15,23 +16,25 @@ class TableMenu extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return SizedBox(
-      height: 50,
-      child: Row(
-        children: [
-          verticalDiv(40),
-          const RowBtn(),
-          verticalDiv(40),
-          const ColBtn(),
-          verticalDiv(40),
-          AlignBtn(),
-          verticalDiv(40),
-          TextDecoBtn(),
-          verticalDiv(40),
-          ListingBtn(),
-          verticalDiv(40),
-        ],
-      ),
+    return Wrap(
+      direction: Axis.horizontal,
+      alignment: WrapAlignment.start,
+      crossAxisAlignment: WrapCrossAlignment.center,
+      children: [
+        verticalDiv(40),
+        const RowBtn(),
+        verticalDiv(40),
+        const ColBtn(),
+        verticalDiv(40),
+        const AlignBtn(),
+        verticalDiv(40),
+        const TextDecoBtn(),
+        verticalDiv(40),
+        const ListingBtn(),
+        verticalDiv(40),
+        const ReadCsvBtn(),
+        verticalDiv(40),
+      ],
     );
   }
 

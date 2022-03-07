@@ -54,6 +54,12 @@ class TableManagerState extends State<TableManager> {
     _keyTable.colLen = colNum;
   }
 
+  void readFromCSV(String csvStr) {
+    List<List<String>> cellStrings = CsvConverter.splitCSV(csvStr);
+    makeNewTable(cellStrings.length, cellStrings[0].length, cellStrings);
+    setState(() {});
+  }
+
   List<double> getWidthMaxList(){
     List<double> maxList = [];
     for(int i = 0; i < _keyTable.colLen; i++){
@@ -207,12 +213,6 @@ class TableManagerState extends State<TableManager> {
       return ;
     }
     CellHelper.changeListing(_keyTable.table[pos[0]][pos[1]], listing);
-  }
-
-  void readFromCSV(String csvStr) {
-    List<List<String>> cellStrings = CsvConverter.splitCSV(csvStr);
-    makeNewTable(cellStrings.length, cellStrings[0].length, cellStrings);
-    setState(() {});
   }
 
   String makeTableHeader(){

@@ -5,16 +5,14 @@ import '../table_manager/table_helper.dart';
 
 class ListingBtn extends StatelessWidget {
 
-  ListingBtn({
+  const ListingBtn({
     Key? key,
   }) : super(key: key);
-
-  final TableHelper tableHelper = TableHelper();
 
   Widget makeListingBtn(Listings listing, Icon icon){
     return IconButton(
         tooltip: listing.toString().split('.').last,
-        onPressed: () { tableHelper.changeListing(listing); },
+        onPressed: () { TableHelper().changeListing(listing); },
         icon: icon
     );
   }
@@ -22,6 +20,7 @@ class ListingBtn extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Row(
+      mainAxisSize: MainAxisSize.min,
       children: [
         makeListingBtn(Listings.none, const Icon(Icons.notes_rounded)),
         makeListingBtn(Listings.unordered, const Icon(Icons.format_list_bulleted_rounded)),
