@@ -196,6 +196,23 @@ class TableManagerState extends State<TableManager> {
     CellHelper.changeListing(_keyTable.table[pos[0]][pos[1]], listing);
   }
 
+
+  void readFromCSV(String csvStr) {
+    List<String> csvList = csvStr.split('\n');
+    List<List<String>> cellStrings = List.generate(
+        csvList.length, (i) => csvList[i].split(','));
+    /*
+    TODO: adjust the table or make new table
+
+    */
+    for(int i = 0; i < cellStrings.length; i++){
+      for(int j = 0; j < cellStrings[i].length; j++){
+        print(cellStrings[i][j]);
+        CellHelper.setText(_keyTable.table[i][j], cellStrings[i][j]);
+      }
+    }
+  }
+
   String makeTableHeader(){
     String header = "|";
     for(int j = 0; j < _keyTable.colLen; j++) {

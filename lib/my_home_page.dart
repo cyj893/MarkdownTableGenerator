@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import 'file_drag_and_drop.dart';
 import 'my_div.dart';
 import 'table_manager/table_helper.dart';
 import 'menus/table_menu.dart';
@@ -35,6 +36,7 @@ class _MyHomePageState extends State<MyHomePage> {
             mainAxisAlignment: MainAxisAlignment.start,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: <Widget>[
+              FileDragAndDrop(),
               const TableMenu(),
               horizontalDiv(MediaQuery.of(context).size.width),
               const SizedBox(height: 10,),

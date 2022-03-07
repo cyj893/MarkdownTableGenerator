@@ -85,6 +85,10 @@ class MyCellState extends State<MyCell> {
     setState(() { _height = height; });
   }
 
+  void setText(String text){
+    setState(() { _textController.text = text; });
+  }
+
   void setFocusedColor(FocusColor focused){
     if( _focused == focused ) return ;
     setState(() { _focused = focused; });
