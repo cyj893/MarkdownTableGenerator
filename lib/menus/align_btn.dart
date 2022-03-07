@@ -5,16 +5,14 @@ import '../table_manager/table_helper.dart';
 
 class AlignBtn extends StatelessWidget {
 
-  AlignBtn({
+  const AlignBtn({
     Key? key,
   }) : super(key: key);
-
-  final TableHelper tableHelper = TableHelper();
 
   Widget makeAlignBtn(Alignments alignment, Icon icon){
     return IconButton(
       tooltip: alignment.toString().split('.').last,
-      onPressed: () { tableHelper.setAlignment(alignment); },
+      onPressed: () { TableHelper().setAlignment(alignment); },
       icon: icon
     );
   }
@@ -22,6 +20,7 @@ class AlignBtn extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Row(
+      mainAxisSize: MainAxisSize.min,
       children: [
         makeAlignBtn(Alignments.left, const Icon(Icons.format_align_left_rounded)),
         makeAlignBtn(Alignments.center, const Icon(Icons.format_align_center_rounded)),

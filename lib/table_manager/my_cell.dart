@@ -7,12 +7,14 @@ import 'key_table.dart';
 
 class MyCell extends StatefulWidget {
 
+  final String initialText;
   final double initialWidth;
   final double initialHeight;
   final FocusColor initialFocused;
 
   const MyCell({
     Key? key,
+    this.initialText = "",
     this.initialWidth = 120.0,
     this.initialHeight = 72.0,
     this.initialFocused = FocusColor.none,
@@ -65,6 +67,8 @@ class MyCellState extends State<MyCell> {
     super.initState();
 
     cellKey = CellKeyGenerator().generateKey();
+    _textController.text = widget.initialText;
+    checkHeightChanged(widget.initialText);
     _width = widget.initialWidth;
     _height = widget.initialHeight;
     _focused = widget.initialFocused;
@@ -207,8 +211,6 @@ class MyCellState extends State<MyCell> {
         ? unorderedListingStr
         : orderedListingStr;
     linesNum = changedLinesNum;
-    List indexes = _keyTable.findFocusedCell();
-    _keyTable.resizeTableHeight(indexes[0]);
   }
 
   void checkWidthChanged(String string){
@@ -216,8 +218,6 @@ class MyCellState extends State<MyCell> {
     if( _beforeTextWidth == nowTextWidth ) return ;
     if( _beforeTextWidth <= widget.initialWidth && nowTextWidth <= widget.initialWidth ) return ;
     _beforeTextWidth = nowTextWidth;
-    List indexes = _keyTable.findFocusedCell();
-    _keyTable.resizeTableWidth(indexes[1]);
   }
 
   Widget makeListingField() => SizedBox(
@@ -239,6 +239,9 @@ class MyCellState extends State<MyCell> {
       debugPrint("string: $string");
       checkHeightChanged(string);
       checkWidthChanged(string);
+      List indexes = _keyTable.findFocusedCell();
+      _keyTable.resizeTableHeight(indexes[0]);
+      _keyTable.resizeTableWidth(indexes[1]);
     },
     textAlign: _alignments[_listing != Listings.none ? 0 : _alignment.index],
     style: _makeTextStyle(),

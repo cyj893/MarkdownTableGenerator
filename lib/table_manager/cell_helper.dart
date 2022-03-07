@@ -24,6 +24,4 @@ class CellHelper {
   static void clearDeco(GlobalKey<MyCellState> cellKey) => cellKey.currentState?.clearDeco();
   static void changeListing(GlobalKey<MyCellState> cellKey, Listings listing) => cellKey.currentState?.changeListing(listing);
 
-
-
 }

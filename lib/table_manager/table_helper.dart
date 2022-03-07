@@ -30,6 +30,8 @@ class TableHelper {
   void clearCellDeco() => tableKey.currentState!.changeCellDeco(CellHelper.clearDeco);
   void changeListing(Listings listing) => tableKey.currentState!.changeListing(listing);
 
+  void readFromCSV(String csvStr) => tableKey.currentState!.readFromCSV(csvStr);
+
   String makeMdData() => tableKey.currentState?.makeMdData() ?? "";
 
   void startSelecting() => tableKey.currentState!.startSelecting();

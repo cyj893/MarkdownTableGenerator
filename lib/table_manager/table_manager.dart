@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:markdown_table_generator/csv_converter.dart';
 import 'dart:math';
 
 import 'package:markdown_table_generator/my_enums.dart';
@@ -35,10 +36,28 @@ class TableManagerState extends State<TableManager> {
   void initState(){
     super.initState();
 
-    for(int i = 0; i < 3; i++){
-      _keyTable.table.insert(i, List.generate(_keyTable.colLen, (index) => GlobalKey()));
-      cellTable.insert(i, List.generate(_keyTable.colLen, (j) => MyCell(key: _keyTable.table[i][j])));
+    makeNewTable(3, 3, []);
+  }
+
+  void makeNewTable(int rowNum, int colNum, List<List<String>> fromTable){
+    debugPrint("makeNewTable");
+    _keyTable.table = [];
+    cellTable = [];
+    for(int i = 0; i < rowNum; i++){
+      _keyTable.table.insert(i, List.generate(colNum, (index) => GlobalKey()));
+      cellTable.insert(i, List.generate(colNum, (j) => MyCell(
+          key: _keyTable.table[i][j],
+          initialText: fromTable.isEmpty ? "" : fromTable[i][j],
+      )));
     }
+    _keyTable.rowLen = rowNum;
+    _keyTable.colLen = colNum;
+  }
+
+  void readFromCSV(String csvStr) {
+    List<List<String>> cellStrings = CsvConverter.splitCSV(csvStr);
+    makeNewTable(cellStrings.length, cellStrings[0].length, cellStrings);
+    setState(() {});
   }
 
   List<double> getWidthMaxList(){
