@@ -196,18 +196,98 @@ class TableManagerState extends State<TableManager> {
     CellHelper.changeListing(_keyTable.table[pos[0]][pos[1]], listing);
   }
 
+  List<List<String>> splitCSV(String csvStr){
+    List<List<String>> list = [[]];
+    int now = 0;
+    for(int i = 0; i < csvStr.length; i++){
+      if( csvStr[i] == '"' ){
+        String s = "";
+        int j = i+1;
+        for( ; j < csvStr.length; j++){
+          if( csvStr[j] == '"' ){
+            j++;
+            if( j >= csvStr.length ){
+              debugPrint("splitCSV error");
+              return [];
+            }
+            bool breakSign = false;
+            switch (csvStr[j]) {
+              case '"': // just "
+                s += '"';
+                break;
+              case ',': // cell ending
+                list[now].add(s);
+                breakSign = true;
+                break;
+              case '\n':  // cell ending and line ending
+                list[now].add(s);
+                list.add([]);
+                now++;
+                breakSign = true;
+                break;
+              default:
+                debugPrint("splitCSV Error");
+                return [];
+            }
+            if( breakSign ) break;
+          }
+          else{
+            s += csvStr[j];
+          }
+        }
+        i = j;
+      }
+      else{
+        String s = "";
+        int j = i;
+        for( ; j < csvStr.length; j++){
+          bool breakSign = false;
+          switch (csvStr[j]) {
+            case '"':
+              j++;
+              if( j >= csvStr.length ){
+                debugPrint("splitCSV Error");
+                return [];
+              }
+              if( csvStr[j] == '"' ){ // just "
+                s += '"';
+              }
+              else{
+                debugPrint("splitCSV Error");
+                return [];
+              }
+              break;
+            case ',': // cell ending
+              list[now].add(s);
+              breakSign = true;
+              break;
+            case '\n':  // cell ending and line ending
+              list[now].add(s);
+              list.add([]);
+              now++;
+              breakSign = true;
+              break;
+            default:
+              s += csvStr[j];
+          }
+          if( breakSign ) break;
+        }
+        i = j;
+      }
+    }
+    if( list.last.isEmpty ) list.removeAt(list.length-1);
+    return list;
+  }
 
   void readFromCSV(String csvStr) {
-    List<String> csvList = csvStr.split('\n');
-    List<List<String>> cellStrings = List.generate(
-        csvList.length, (i) => csvList[i].split(','));
+    csvStr = csvStr.replaceAll('\r\n', '\n'); // convert CRLF to LF
+    List<List<String>> cellStrings = splitCSV(csvStr);
     /*
     TODO: adjust the table or make new table
 
     */
     for(int i = 0; i < cellStrings.length; i++){
       for(int j = 0; j < cellStrings[i].length; j++){
-        print(cellStrings[i][j]);
         CellHelper.setText(_keyTable.table[i][j], cellStrings[i][j]);
       }
     }
