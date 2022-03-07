@@ -3,8 +3,7 @@ import 'package:desktop_drop/desktop_drop.dart';
 import 'package:cross_file/cross_file.dart';
 import 'package:file_picker/file_picker.dart';
 import 'dart:typed_data';
-import 'dart:convert' show utf8;
-import 'package:cp949/cp949.dart' as cp949;
+import 'package:markdown_table_generator/csv_converter.dart';
 
 import 'table_manager/table_helper.dart';
 
@@ -24,19 +23,6 @@ class FileDragAndDropState extends State<FileDragAndDrop> {
 
   Color uploadingColor = Colors.blue[100]!;
   Color defaultColor = Colors.grey[400]!;
-
-  String convertBytesToString(Uint8List fileBytes){
-    String ret = "";
-    try{
-      ret = utf8.decode(fileBytes);
-      debugPrint("decode: UTF8");
-    }
-    catch (e) {
-      ret = cp949.decode(fileBytes);
-      debugPrint("decode: CP949");
-    }
-    return ret;
-  }
 
   Container makeDropZone(){
     Color color = _dragging ? uploadingColor : defaultColor;
@@ -66,9 +52,9 @@ class FileDragAndDropState extends State<FileDragAndDrop> {
                 type: FileType.custom,
                 allowedExtensions: ['csv'],
               );
-              if (result != null && result.files.isNotEmpty) {
+              if( result != null && result.files.isNotEmpty ){
                 final Uint8List fileBytes = result.files.first.bytes!.buffer.asUint8List();
-                String csvStr = convertBytesToString(fileBytes);
+                String csvStr = CsvConverter.convertBytesToString(fileBytes);
                 debugPrint(csvStr);
                 tableHelper.readFromCSV(csvStr);
               }
@@ -100,7 +86,7 @@ class FileDragAndDropState extends State<FileDragAndDrop> {
         debugPrint('onDragDone:');
         for(final file in detail.files){
           final Uint8List fileBytes = await file.readAsBytes();
-          String csvStr = convertBytesToString(fileBytes);
+          String csvStr = CsvConverter.convertBytesToString(fileBytes);
           debugPrint(csvStr);
           tableHelper.readFromCSV(csvStr);
         }

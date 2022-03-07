@@ -102,4 +102,13 @@ class KeyTable {
     }
   }
 
+  void resizeTable(){
+    for(int i = 0; i < colLen; i++){
+      resizeTableWidth(i);
+    }
+    for(int i = 0; i < rowLen; i++){
+      resizeTableHeight(i);
+    }
+  }
+
 }

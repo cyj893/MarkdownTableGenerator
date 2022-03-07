@@ -7,12 +7,14 @@ import 'key_table.dart';
 
 class MyCell extends StatefulWidget {
 
+  final String initialText;
   final double initialWidth;
   final double initialHeight;
   final FocusColor initialFocused;
 
   const MyCell({
     Key? key,
+    this.initialText = "",
     this.initialWidth = 120.0,
     this.initialHeight = 72.0,
     this.initialFocused = FocusColor.none,
@@ -65,6 +67,8 @@ class MyCellState extends State<MyCell> {
     super.initState();
 
     cellKey = CellKeyGenerator().generateKey();
+    _textController.text = widget.initialText;
+    checkHeightChanged(widget.initialText);
     _width = widget.initialWidth;
     _height = widget.initialHeight;
     _focused = widget.initialFocused;
@@ -83,14 +87,6 @@ class MyCellState extends State<MyCell> {
   void setHeight(double height){
     if( _height == height ) return ;
     setState(() { _height = height; });
-  }
-
-  void setText(String text){
-    setState(() {
-      checkHeightChanged(text);
-      checkWidthChanged(text);
-      _textController.text = text;
-    });
   }
 
   void setFocusedColor(FocusColor focused){

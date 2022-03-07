@@ -13,7 +13,6 @@ class CellHelper {
 
   static void setWidth(GlobalKey<MyCellState> cellKey, double width) => cellKey.currentState?.setWidth(width);
   static void setHeight(GlobalKey<MyCellState> cellKey, double height) => cellKey.currentState?.setHeight(height);
-  static void setText(GlobalKey<MyCellState> cellKey, String text) => cellKey.currentState?.setText(text);
 
   static void setFocusedColor(GlobalKey<MyCellState> cellKey, FocusColor focused) => cellKey.currentState?.setFocusedColor(focused);
   static void changeAlignment(GlobalKey<MyCellState> cellKey, Alignments alignment) => cellKey.currentState?.changeAlignment(alignment);
@@ -24,7 +23,5 @@ class CellHelper {
   static void changeLink(GlobalKey<MyCellState> cellKey) => cellKey.currentState?.changeLink();
   static void clearDeco(GlobalKey<MyCellState> cellKey) => cellKey.currentState?.clearDeco();
   static void changeListing(GlobalKey<MyCellState> cellKey, Listings listing) => cellKey.currentState?.changeListing(listing);
-
-
 
 }
