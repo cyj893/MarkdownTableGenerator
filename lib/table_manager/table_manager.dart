@@ -291,6 +291,14 @@ class TableManagerState extends State<TableManager> {
         CellHelper.setText(_keyTable.table[i][j], cellStrings[i][j]);
       }
     }
+    setState(() {
+      for(int i = 0; i < _keyTable.colLen; i++){
+        _keyTable.resizeTableWidth(i);
+      }
+      for(int i = 0; i < _keyTable.rowLen; i++){
+        _keyTable.resizeTableHeight(i);
+      }
+    });
   }
 
   String makeTableHeader(){

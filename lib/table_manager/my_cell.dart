@@ -86,7 +86,11 @@ class MyCellState extends State<MyCell> {
   }
 
   void setText(String text){
-    setState(() { _textController.text = text; });
+    setState(() {
+      checkHeightChanged(text);
+      checkWidthChanged(text);
+      _textController.text = text;
+    });
   }
 
   void setFocusedColor(FocusColor focused){
@@ -211,8 +215,6 @@ class MyCellState extends State<MyCell> {
         ? unorderedListingStr
         : orderedListingStr;
     linesNum = changedLinesNum;
-    List indexes = _keyTable.findFocusedCell();
-    _keyTable.resizeTableHeight(indexes[0]);
   }
 
   void checkWidthChanged(String string){
@@ -220,8 +222,6 @@ class MyCellState extends State<MyCell> {
     if( _beforeTextWidth == nowTextWidth ) return ;
     if( _beforeTextWidth <= widget.initialWidth && nowTextWidth <= widget.initialWidth ) return ;
     _beforeTextWidth = nowTextWidth;
-    List indexes = _keyTable.findFocusedCell();
-    _keyTable.resizeTableWidth(indexes[1]);
   }
 
   Widget makeListingField() => SizedBox(
@@ -243,6 +243,9 @@ class MyCellState extends State<MyCell> {
       debugPrint("string: $string");
       checkHeightChanged(string);
       checkWidthChanged(string);
+      List indexes = _keyTable.findFocusedCell();
+      _keyTable.resizeTableHeight(indexes[0]);
+      _keyTable.resizeTableWidth(indexes[1]);
     },
     textAlign: _alignments[_listing != Listings.none ? 0 : _alignment.index],
     style: _makeTextStyle(),
