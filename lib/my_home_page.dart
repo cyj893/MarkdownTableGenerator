@@ -22,6 +22,9 @@ class _MyHomePageState extends State<MyHomePage> {
 
   }
 
+  final ScrollController horizontalScroll = ScrollController();
+  final ScrollController verticalScroll = ScrollController();
+  final double width = 20;
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -38,7 +41,11 @@ class _MyHomePageState extends State<MyHomePage> {
               const TableMenu(),
               horizontalDiv(MediaQuery.of(context).size.width),
               const SizedBox(height: 10,),
-              tableHelper.tableManager!,
+              SizedBox(
+                width: MediaQuery.of(context).size.width,
+                height: 500,
+                child: tableHelper.tableManager!,
+              ),
               const SizedBox(height: 10,),
               const ShowRes(),
             ],

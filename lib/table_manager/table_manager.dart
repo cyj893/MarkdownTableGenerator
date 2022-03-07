@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:markdown_table_generator/csv_converter.dart';
+import 'package:adaptive_scrollbar/adaptive_scrollbar.dart';
 import 'dart:math';
 
 import 'package:markdown_table_generator/my_enums.dart';
@@ -31,6 +32,18 @@ class TableManagerState extends State<TableManager> {
 
   List<double> w = [0.0];
   List<double> h = [0.0];
+
+  final ScrollController horizontalScroll = ScrollController();
+  final ScrollController verticalScroll = ScrollController();
+  final double scrollBarWidth = 16;
+  final BoxDecoration sliderDecoration = BoxDecoration(
+      color: Colors.blueGrey.withOpacity(0.2),
+      borderRadius: const BorderRadius.all(Radius.circular(12.0))
+  );
+  final BoxDecoration sliderActiveDecoration = BoxDecoration(
+      color: Colors.blueGrey.withOpacity(0.5),
+      borderRadius: const BorderRadius.all(Radius.circular(12.0))
+  );
 
   @override
   void initState(){
@@ -357,15 +370,47 @@ s ---------
     }
   }
 
+  Widget buildTable() => MouseDragSelectable(
+    child: Column(
+      children: List.generate(_keyTable.rowLen, (i) => Row(
+        children: List.generate(_keyTable.colLen, (j) => cellTable[i][j]),
+      )),
+    ),
+  );
+
   @override
   Widget build(BuildContext context) {
     debugPrint("Build 0");
-    return MouseDragSelectable(
-        child: Column(
-          children: List.generate(_keyTable.rowLen, (i) => Row(
-            children: List.generate(_keyTable.colLen, (j) => cellTable[i][j]),
-          )),
-        )
+    return AdaptiveScrollbar(
+        controller: verticalScroll,
+        width: scrollBarWidth,
+        scrollToClickDelta: 75,
+        scrollToClickFirstDelay: 200,
+        scrollToClickOtherDelay: 50,
+        sliderDecoration: sliderDecoration,
+        sliderActiveDecoration: sliderActiveDecoration,
+        underColor: Colors.transparent,
+        child: AdaptiveScrollbar(
+            underSpacing: EdgeInsets.only(bottom: scrollBarWidth),
+            controller: horizontalScroll,
+            width: scrollBarWidth,
+            position: ScrollbarPosition.bottom,
+            sliderDecoration: sliderDecoration,
+            sliderActiveDecoration: sliderActiveDecoration,
+            underColor: Colors.transparent,
+            child: SingleChildScrollView(
+                controller: horizontalScroll,
+                scrollDirection: Axis.horizontal,
+                child: ScrollConfiguration(
+                  behavior: ScrollConfiguration.of(context).copyWith(scrollbars: false),
+                  child: SingleChildScrollView(
+                    controller: verticalScroll,
+                    scrollDirection: Axis.vertical,
+                    child: buildTable(),
+                  ),
+                ),
+            ),
+        ),
     );
   }
 
