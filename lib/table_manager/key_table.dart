@@ -27,9 +27,9 @@ class KeyTable {
 
   void printKeyTable(){
     print("");
-    for(int i = 0; i < table.length; i++){
-      for(int j = 0; j < table[i].length; j++){
-        print("${CellHelper.getKeyNum(table[i][j])} ");
+    for(List<GlobalKey<MyCellState>> row in table){
+      for(GlobalKey<MyCellState> key in row){
+        print("${CellHelper.getKeyNum(key)} ");
       }
     }
     print("");
@@ -70,9 +70,9 @@ class KeyTable {
   }
 
   void clearFocus(){
-    for(int i = 0; i < rowLen; i++){
-      for(int j = 0; j < colLen; j++){
-        CellHelper.setFocusedColor(table[i][j], FocusColor.none);
+    for(List<GlobalKey<MyCellState>> row in table){
+      for(GlobalKey<MyCellState> key in row){
+        CellHelper.setFocusedColor(key, FocusColor.none);
       }
     }
     focusedCellKey = -1;

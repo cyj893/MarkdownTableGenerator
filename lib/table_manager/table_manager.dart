@@ -3,6 +3,7 @@ import 'package:markdown_table_generator/csv_converter.dart';
 import 'package:adaptive_scrollbar/adaptive_scrollbar.dart';
 import 'dart:math';
 
+import 'package:markdown_table_generator/constants.dart' as constants;
 import 'package:markdown_table_generator/my_enums.dart';
 import 'mouse_drag_selectable/mouse_drag_selectable.dart';
 import 'cell/cell_helper.dart';
@@ -35,12 +36,12 @@ class TableManagerState extends State<TableManager> {
 
   final ScrollController horizontalScroll = ScrollController();
   final ScrollController verticalScroll = ScrollController();
-  final double scrollBarWidth = 16;
-  final BoxDecoration sliderDecoration = BoxDecoration(
+  final double _scrollBarWidth = 16;
+  final BoxDecoration _sliderDecoration = BoxDecoration(
       color: Colors.blueGrey.withOpacity(0.2),
       borderRadius: const BorderRadius.all(Radius.circular(12.0))
   );
-  final BoxDecoration sliderActiveDecoration = BoxDecoration(
+  final BoxDecoration _sliderActiveDecoration = BoxDecoration(
       color: Colors.blueGrey.withOpacity(0.5),
       borderRadius: const BorderRadius.all(Radius.circular(12.0))
   );
@@ -76,7 +77,7 @@ class TableManagerState extends State<TableManager> {
   List<double> getWidthMaxList(){
     List<double> maxList = [];
     for(int i = 0; i < _keyTable.colLen; i++){
-      double maxWidth = 120.0;
+      double maxWidth = constants.cellWidth;
       for(int j = 0; j < _keyTable.rowLen; j++){
         maxWidth = max<double>(maxWidth, CellHelper.getWidth(_keyTable.table[j][i]) + 50);
       }
@@ -127,7 +128,7 @@ class TableManagerState extends State<TableManager> {
   List<double> getHeightMaxList(){
     List<double> maxList = [];
     for(int i = 0; i < _keyTable.rowLen; i++){
-      double maxHeight = 72.0;
+      double maxHeight = constants.cellHeight;
       for(int j = 0; j < _keyTable.colLen; j++){
         maxHeight = max<double>(maxHeight, CellHelper.getHeight(_keyTable.table[i][j]));
       }
@@ -278,7 +279,7 @@ class TableManagerState extends State<TableManager> {
         if( a[0] >= b[0] ) return -1;
         return 1;
       });
-      double maxHeight = max<double>(list[0][0], 72.0);
+      double maxHeight = max<double>(list[0][0], constants.cellHeight);
       h.add(h.last + maxHeight);
     }
     /*
@@ -292,7 +293,7 @@ class TableManagerState extends State<TableManager> {
         if( a[0] >= b[0] ) return -1;
         return 1;
       });
-      double maxWidth = max<double>(list[0][0], 120.0);
+      double maxWidth = max<double>(list[0][0], constants.cellWidth);
       w.add(w.last + maxWidth);
     }
   }
@@ -383,20 +384,20 @@ s ---------
     debugPrint("Build 0");
     return AdaptiveScrollbar(
         controller: verticalScroll,
-        width: scrollBarWidth,
+        width: _scrollBarWidth,
         scrollToClickDelta: 75,
         scrollToClickFirstDelay: 200,
         scrollToClickOtherDelay: 50,
-        sliderDecoration: sliderDecoration,
-        sliderActiveDecoration: sliderActiveDecoration,
+        sliderDecoration: _sliderDecoration,
+        sliderActiveDecoration: _sliderActiveDecoration,
         underColor: Colors.transparent,
         child: AdaptiveScrollbar(
-            underSpacing: EdgeInsets.only(bottom: scrollBarWidth),
+            underSpacing: EdgeInsets.only(bottom: _scrollBarWidth),
             controller: horizontalScroll,
-            width: scrollBarWidth,
+            width: _scrollBarWidth,
             position: ScrollbarPosition.bottom,
-            sliderDecoration: sliderDecoration,
-            sliderActiveDecoration: sliderActiveDecoration,
+            sliderDecoration: _sliderDecoration,
+            sliderActiveDecoration: _sliderActiveDecoration,
             underColor: Colors.transparent,
             child: SingleChildScrollView(
                 controller: horizontalScroll,

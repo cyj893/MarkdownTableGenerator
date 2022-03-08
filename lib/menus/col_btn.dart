@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import 'package:markdown_table_generator/constants.dart' as constants;
 import '../my_div.dart';
 import '../table_manager/table_helper.dart';
 
@@ -30,7 +31,7 @@ class ColBtnState extends State<ColBtn> {
     return InkWell(
       onTap: () { tableHelper.insertColumn(0); },
       child: SizedBox(
-        width: 50,
+        width: constants.btnSize,
         child: Stack(
           children: const [
             Positioned(
@@ -57,7 +58,7 @@ class ColBtnState extends State<ColBtn> {
     return InkWell(
       onTap: () { tableHelper.insertColumn(1); },
       child: SizedBox(
-        width: 50,
+        width: constants.btnSize,
         child: Stack(
           children: const [
             Positioned(
@@ -83,9 +84,9 @@ class ColBtnState extends State<ColBtn> {
   Widget makeColBtn(){
     return AnimatedContainer(
         alignment: Alignment.centerLeft,
-        duration: const Duration(milliseconds: 200),
-        width: isColSelected ? 203 : 50,
-        height: 50,
+        duration: constants.animationDuration,
+        width: isColSelected ? constants.btnSize*4+3 : constants.btnSize,
+        height: constants.btnSize,
         child: SingleChildScrollView(
           scrollDirection: Axis.horizontal,
           child: Row(
@@ -93,7 +94,7 @@ class ColBtnState extends State<ColBtn> {
               InkWell(
                 onTap: () { setState((){ isColSelected = !isColSelected; }); },
                 child: const SizedBox(
-                  width: 50,
+                  width: constants.btnSize,
                   child: Center(child: Text("Col", style: TextStyle(fontWeight: FontWeight.bold),),),
                 ),
               ),
@@ -103,7 +104,7 @@ class ColBtnState extends State<ColBtn> {
               Tooltip(message: "add to the right", child: addRightColBtn(),),
               verticalDiv(10),
               SizedBox(
-                width: 50,
+                width: constants.btnSize,
                 child: IconButton(
                   tooltip: "delete",
                   onPressed: () { tableHelper.deleteColumn(); },

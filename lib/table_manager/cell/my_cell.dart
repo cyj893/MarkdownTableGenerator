@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import 'package:markdown_table_generator/constants.dart' as constants;
 import 'package:markdown_table_generator/my_enums.dart';
 import 'input_link_inkwell.dart';
 import 'cell_key_generator.dart';
@@ -15,8 +16,8 @@ class MyCell extends StatefulWidget {
   const MyCell({
     Key? key,
     this.initialText = "",
-    this.initialWidth = 120.0,
-    this.initialHeight = 72.0,
+    this.initialWidth = constants.cellWidth,
+    this.initialHeight = constants.cellHeight,
     this.initialFocused = FocusColor.none,
   }) : super(key: key);
 
