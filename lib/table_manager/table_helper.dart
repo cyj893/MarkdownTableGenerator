@@ -16,6 +16,8 @@ class TableHelper {
   TableManager? tableManager;
   GlobalKey<TableManagerState> tableKey = GlobalKey();
 
+  void clearTable() => tableKey.currentState!.clearTable();
+
   void insertRow(int location) => tableKey.currentState!.insertRow(location);
   void deleteRow() => tableKey.currentState!.deleteRow();
   void insertColumn(int location) => tableKey.currentState!.insertColumn(location);
