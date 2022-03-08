@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:markdown_table_generator/csv_converter.dart';
+import '../menus/csv_converter.dart';
 import 'package:adaptive_scrollbar/adaptive_scrollbar.dart';
 import 'dart:math';
 

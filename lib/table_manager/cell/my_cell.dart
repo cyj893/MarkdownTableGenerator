@@ -81,6 +81,13 @@ class MyCellState extends State<MyCell> {
     });
   }
 
+  void setText(String text){
+    debugPrint("set $cellKey: $text");
+    _textController.text = text;
+    checkHeightChanged(text);
+    checkWidthChanged(text);
+  }
+
   void setWidth(double width){
     if( _width == width ) return ;
     setState(() { _width = width; });
@@ -238,6 +245,10 @@ class MyCellState extends State<MyCell> {
     focusNode: _focusNode,
     onChanged: (string) {
       debugPrint("string: $string");
+      if( string.contains('\t') ){
+        _keyTable.inputFromCopy(string);
+        return ;
+      }
       checkHeightChanged(string);
       checkWidthChanged(string);
       List indexes = _keyTable.findFocusedCell();

@@ -4,7 +4,7 @@ import 'package:cross_file/cross_file.dart';
 import 'package:file_picker/file_picker.dart';
 import 'dart:typed_data';
 
-import 'package:markdown_table_generator/csv_converter.dart';
+import 'csv_converter.dart';
 import 'package:markdown_table_generator/table_manager/table_helper.dart';
 
 class FileDragAndDrop extends StatefulWidget {
