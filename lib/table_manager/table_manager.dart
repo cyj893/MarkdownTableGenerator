@@ -68,6 +68,16 @@ class TableManagerState extends State<TableManager> {
     _keyTable.colLen = colNum;
   }
 
+  void clearTable(){
+    debugPrint("clearTable");
+    for(List<GlobalKey<MyCellState>> row in _keyTable.table){
+      for(GlobalKey<MyCellState> key in row){
+        CellHelper.setText(key, "");
+      }
+    }
+    _keyTable.resizeTable();
+  }
+
   void readFromCSV(String csvStr) {
     List<List<String>> cellStrings = CsvConverter.splitCSV(csvStr);
     makeNewTable(cellStrings.length, cellStrings[0].length, cellStrings);

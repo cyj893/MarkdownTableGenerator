@@ -191,12 +191,7 @@ class KeyTable {
         i = j;
       }
     }
-    for(int i = 0; i < colLen; i++){
-      resizeTableWidth(i);
-    }
-    for(int i = 0; i < rowLen; i++){
-      resizeTableHeight(i);
-    }
+    resizeTable();
   }
 
 

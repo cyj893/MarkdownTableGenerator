@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:markdown_table_generator/menus/listing_btn.dart';
+import 'package:markdown_table_generator/menus/clear_table_btn.dart';
 
 import '../my_div.dart';
 import 'read_csv_btn.dart';
@@ -33,6 +34,8 @@ class TableMenu extends StatelessWidget {
         const ListingBtn(),
         verticalDiv(40),
         const ReadCsvBtn(),
+        verticalDiv(40),
+        const ClearTableBtn(),
         verticalDiv(40),
       ],
     );
