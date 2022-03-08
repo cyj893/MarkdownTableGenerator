@@ -1,6 +1,7 @@
 import 'dart:math';
 import 'package:flutter/material.dart';
 
+import 'package:markdown_table_generator/gloabals.dart' as globals;
 import 'package:markdown_table_generator/my_enums.dart';
 import 'cell/my_cell.dart';
 import 'cell/cell_helper.dart';
@@ -79,7 +80,7 @@ class KeyTable {
   }
 
   void resizeTableWidth(int colNum){
-    List<List> list = List.generate(rowLen, (i) => [CellHelper.getWidth(table[i][colNum])+50, i]);
+    List<List> list = List.generate(rowLen, (i) => [CellHelper.getWidth(table[i][colNum])+globals.widthMargin, i]);
     list.sort((a, b) {
       if( a[0] >= b[0] ) return -1;
       return 1;

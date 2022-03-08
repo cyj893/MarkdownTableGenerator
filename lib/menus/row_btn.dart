@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import 'package:markdown_table_generator/constants.dart' as constants;
+import 'package:markdown_table_generator/gloabals.dart' as globals;
 import '../my_div.dart';
 import '../table_manager/table_helper.dart';
 
@@ -31,7 +31,7 @@ class RowBtnState extends State<RowBtn> {
     return InkWell(
       onTap: () { tableHelper.insertRow(0); },
       child: SizedBox(
-        width: constants.btnSize,
+        width: globals.btnSize,
         child: Stack(
           children: const [
             Positioned(
@@ -58,7 +58,7 @@ class RowBtnState extends State<RowBtn> {
     return InkWell(
       onTap: () { tableHelper.insertRow(1); },
       child: SizedBox(
-        width: constants.btnSize,
+        width: globals.btnSize,
         child: Stack(
           children: const [
             Positioned(
@@ -84,9 +84,9 @@ class RowBtnState extends State<RowBtn> {
   Widget makeRowBtn(){
     return AnimatedContainer(
         alignment: Alignment.centerLeft,
-        duration: constants.animationDuration,
-        width: isRowSelected ? constants.btnSize*4+3 : constants.btnSize,
-        height: constants.btnSize,
+        duration: globals.animationDuration,
+        width: isRowSelected ? globals.btnSize*4+3 : globals.btnSize,
+        height: globals.btnSize,
         child: SingleChildScrollView(
           scrollDirection: Axis.horizontal,
           child: Row(
@@ -94,7 +94,7 @@ class RowBtnState extends State<RowBtn> {
               InkWell(
                 onTap: () { setState((){ isRowSelected = !isRowSelected; }); },
                 child: const SizedBox(
-                  width: constants.btnSize,
+                  width: globals.btnSize,
                   child: Center(child: Text("Row", style: TextStyle(fontWeight: FontWeight.bold),),),
                 ),
               ),
@@ -104,7 +104,7 @@ class RowBtnState extends State<RowBtn> {
               Tooltip(message: "add below", child: addBelowBtn(),),
               verticalDiv(10),
               SizedBox(
-                width: constants.btnSize,
+                width: globals.btnSize,
                 child: IconButton(
                   tooltip: "delete",
                   onPressed: () { tableHelper.deleteRow(); },

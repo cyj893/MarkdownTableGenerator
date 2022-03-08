@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import 'package:markdown_table_generator/constants.dart' as constants;
+import 'package:markdown_table_generator/gloabals.dart' as globals;
 import '../my_div.dart';
 import '../table_manager/table_helper.dart';
 
@@ -31,7 +31,7 @@ class ColBtnState extends State<ColBtn> {
     return InkWell(
       onTap: () { tableHelper.insertColumn(0); },
       child: SizedBox(
-        width: constants.btnSize,
+        width: globals.btnSize,
         child: Stack(
           children: const [
             Positioned(
@@ -58,7 +58,7 @@ class ColBtnState extends State<ColBtn> {
     return InkWell(
       onTap: () { tableHelper.insertColumn(1); },
       child: SizedBox(
-        width: constants.btnSize,
+        width: globals.btnSize,
         child: Stack(
           children: const [
             Positioned(
@@ -84,9 +84,9 @@ class ColBtnState extends State<ColBtn> {
   Widget makeColBtn(){
     return AnimatedContainer(
         alignment: Alignment.centerLeft,
-        duration: constants.animationDuration,
-        width: isColSelected ? constants.btnSize*4+3 : constants.btnSize,
-        height: constants.btnSize,
+        duration: globals.animationDuration,
+        width: isColSelected ? globals.btnSize*4+3 : globals.btnSize,
+        height: globals.btnSize,
         child: SingleChildScrollView(
           scrollDirection: Axis.horizontal,
           child: Row(
@@ -94,7 +94,7 @@ class ColBtnState extends State<ColBtn> {
               InkWell(
                 onTap: () { setState((){ isColSelected = !isColSelected; }); },
                 child: const SizedBox(
-                  width: constants.btnSize,
+                  width: globals.btnSize,
                   child: Center(child: Text("Col", style: TextStyle(fontWeight: FontWeight.bold),),),
                 ),
               ),
@@ -104,7 +104,7 @@ class ColBtnState extends State<ColBtn> {
               Tooltip(message: "add to the right", child: addRightColBtn(),),
               verticalDiv(10),
               SizedBox(
-                width: constants.btnSize,
+                width: globals.btnSize,
                 child: IconButton(
                   tooltip: "delete",
                   onPressed: () { tableHelper.deleteColumn(); },

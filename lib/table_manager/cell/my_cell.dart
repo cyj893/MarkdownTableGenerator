@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import 'package:markdown_table_generator/constants.dart' as constants;
+import 'package:markdown_table_generator/gloabals.dart' as globals;
 import 'package:markdown_table_generator/my_enums.dart';
 import 'input_link_inkwell.dart';
 import 'cell_key_generator.dart';
@@ -16,8 +16,8 @@ class MyCell extends StatefulWidget {
   const MyCell({
     Key? key,
     this.initialText = "",
-    this.initialWidth = constants.cellWidth,
-    this.initialHeight = constants.cellHeight,
+    this.initialWidth = globals.cellWidth,
+    this.initialHeight = globals.cellHeight,
     this.initialFocused = FocusColor.none,
   }) : super(key: key);
 
@@ -36,6 +36,7 @@ class MyCellState extends State<MyCell> {
   double _height = 0;
   double _beforeTextWidth = 0.0;
   double _textHeight = 0.0;
+  double _listingWidth = 0.0;
   int linesNum = 1;
 
   final TextEditingController _listingController = TextEditingController();
@@ -222,14 +223,14 @@ class MyCellState extends State<MyCell> {
   }
 
   void checkWidthChanged(String string){
-    double nowTextWidth = getSize().width + 50;
+    double nowTextWidth = getSize().width + globals.widthMargin;
     if( _beforeTextWidth == nowTextWidth ) return ;
     if( _beforeTextWidth <= widget.initialWidth && nowTextWidth <= widget.initialWidth ) return ;
     _beforeTextWidth = nowTextWidth;
   }
 
   Widget makeListingField() => SizedBox(
-      width: _listing != Listings.none ? 20 : 0,
+      width: _listing != Listings.none ? _listingWidth + 10 : 0,
       child: TextField(
         keyboardType: TextInputType.multiline,
         maxLines: null,
@@ -301,6 +302,8 @@ class MyCellState extends State<MyCell> {
   @override
   Widget build(BuildContext context) {
     _textHeight = getSize().height;
+    _listingWidth = getTextSize("00.", _makeTextStyle()).width;
+    globals.widthMargin = _listingWidth + 40;
     return Stack(
       children: [
         buildCell(),

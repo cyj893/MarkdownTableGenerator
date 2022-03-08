@@ -3,7 +3,7 @@ import '../menus/csv_converter.dart';
 import 'package:adaptive_scrollbar/adaptive_scrollbar.dart';
 import 'dart:math';
 
-import 'package:markdown_table_generator/constants.dart' as constants;
+import 'package:markdown_table_generator/gloabals.dart' as globals;
 import 'package:markdown_table_generator/my_enums.dart';
 import 'mouse_drag_selectable/mouse_drag_selectable.dart';
 import 'cell/cell_helper.dart';
@@ -87,9 +87,9 @@ class TableManagerState extends State<TableManager> {
   List<double> getWidthMaxList(){
     List<double> maxList = [];
     for(int i = 0; i < _keyTable.colLen; i++){
-      double maxWidth = constants.cellWidth;
+      double maxWidth = globals.cellWidth;
       for(int j = 0; j < _keyTable.rowLen; j++){
-        maxWidth = max<double>(maxWidth, CellHelper.getWidth(_keyTable.table[j][i]) + 50);
+        maxWidth = max<double>(maxWidth, CellHelper.getWidth(_keyTable.table[j][i]) + globals.widthMargin);
       }
       maxList.add(maxWidth);
     }
@@ -138,7 +138,7 @@ class TableManagerState extends State<TableManager> {
   List<double> getHeightMaxList(){
     List<double> maxList = [];
     for(int i = 0; i < _keyTable.rowLen; i++){
-      double maxHeight = constants.cellHeight;
+      double maxHeight = globals.cellHeight;
       for(int j = 0; j < _keyTable.colLen; j++){
         maxHeight = max<double>(maxHeight, CellHelper.getHeight(_keyTable.table[i][j]));
       }
@@ -289,7 +289,7 @@ class TableManagerState extends State<TableManager> {
         if( a[0] >= b[0] ) return -1;
         return 1;
       });
-      double maxHeight = max<double>(list[0][0], constants.cellHeight);
+      double maxHeight = max<double>(list[0][0], globals.cellHeight);
       h.add(h.last + maxHeight);
     }
     /*
@@ -298,12 +298,12 @@ class TableManagerState extends State<TableManager> {
         h[i]       h[i+1]
     */
     for(int j = 0; j < _keyTable.colLen; j++){
-      List<List> list = List.generate(_keyTable.rowLen, (index) => [CellHelper.getWidth(_keyTable.table[index][j])+50, index]);
+      List<List> list = List.generate(_keyTable.rowLen, (index) => [CellHelper.getWidth(_keyTable.table[index][j])+globals.widthMargin, index]);
       list.sort((a, b) {
         if( a[0] >= b[0] ) return -1;
         return 1;
       });
-      double maxWidth = max<double>(list[0][0], constants.cellWidth);
+      double maxWidth = max<double>(list[0][0], globals.cellWidth);
       w.add(w.last + maxWidth);
     }
   }
