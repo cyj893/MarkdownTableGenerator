@@ -11,6 +11,8 @@ class CellHelper {
   static String getMDText(GlobalKey<MyCellState> cellKey) => cellKey.currentState?.getMDText() ?? "";
   static Alignments getAlignment(GlobalKey<MyCellState> cellKey) => cellKey.currentState?.getAlignment() ?? Alignments.center;
 
+  static void setText(GlobalKey<MyCellState> cellKey, String text) => cellKey.currentState?.setText(text);
+
   static void setWidth(GlobalKey<MyCellState> cellKey, double width) => cellKey.currentState?.setWidth(width);
   static void setHeight(GlobalKey<MyCellState> cellKey, double height) => cellKey.currentState?.setHeight(height);
 

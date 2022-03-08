@@ -111,4 +111,93 @@ class KeyTable {
     }
   }
 
+  void inputFromCopy(String csvStr){
+    List<int> pos = findFocusedCell();
+
+    csvStr = csvStr.replaceAll('\r\n', '\n'); // convert CRLF to LF
+    int di = 0;
+    int dj = 0;
+    for(int i = 0; i < csvStr.length; i++){
+      int nowI = pos[0]+di;
+      int nowJ = pos[1]+dj;
+      if( csvStr[i] == '\t' ){
+        dj++;
+        continue;
+      }
+      if( csvStr[i] == '"' ){
+        String s = "";
+        int j = i+1;
+        for( ; j < csvStr.length; j++){
+          if( csvStr[j] == '"' ){
+            j++;
+            if( j >= csvStr.length ){
+              debugPrint("!!");
+              debugPrint("tabs error");
+              return ;
+            }
+            bool breakSign = false;
+            switch (csvStr[j]) {
+              case '"': // just "
+                s += '"';
+                break;
+              case '\t': // cell ending
+                if( !csvStr.substring(i, j).contains('\n') ) s = '"$s"';
+                if( nowI < rowLen && nowJ < colLen ) CellHelper.setText(table[nowI][nowJ], s);
+                dj++;
+                breakSign = true;
+                break;
+              case '\n':  // cell ending and line ending
+                if( !csvStr.substring(i, j).contains('\n') ) s = '"$s"';
+                if( nowI < rowLen && nowJ < colLen ) CellHelper.setText(table[nowI][nowJ], s);
+                di++;
+                dj = 0;
+                breakSign = true;
+                break;
+              default:
+                debugPrint("!");
+                debugPrint("tabs Error");
+                return ;
+            }
+            if( breakSign ) break;
+          }
+          else{
+            s += csvStr[j];
+          }
+        }
+        i = j;
+      }
+      else{
+        String s = "";
+        int j = i;
+        for( ; j < csvStr.length; j++){
+          bool breakSign = false;
+          switch (csvStr[j]) {
+            case '\t': // cell ending
+              if( nowI < rowLen && nowJ < colLen ) CellHelper.setText(table[nowI][nowJ], s);
+              dj++;
+              breakSign = true;
+              break;
+            case '\n':  // cell ending and line ending
+              if( nowI < rowLen && nowJ < colLen ) CellHelper.setText(table[nowI][nowJ], s);
+              di++;
+              dj = 0;
+              breakSign = true;
+              break;
+            default:
+              s += csvStr[j];
+          }
+          if( breakSign ) break;
+        }
+        i = j;
+      }
+    }
+    for(int i = 0; i < colLen; i++){
+      resizeTableWidth(i);
+    }
+    for(int i = 0; i < rowLen; i++){
+      resizeTableHeight(i);
+    }
+  }
+
+
 }
