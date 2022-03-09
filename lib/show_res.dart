@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:adaptive_scrollbar/adaptive_scrollbar.dart';
 
+import 'package:markdown_table_generator/globals.dart' as globals;
+import 'package:markdown_table_generator/get_text_size.dart';
 import 'table_manager/table_helper.dart';
 
 class ShowRes extends StatefulWidget {
@@ -19,6 +22,9 @@ class ShowResState extends State<ShowRes> {
   TableHelper tableHelper = TableHelper();
 
   String mdData = "";
+
+  final ScrollController horizontalScroll = ScrollController();
+  final _textStyle = const TextStyle(fontFamily: "D2Coding");
 
   @override
   void initState() {
@@ -51,18 +57,32 @@ class ShowResState extends State<ShowRes> {
   }
 
   Widget showRes(){
+    int dataLength = '\n'.allMatches(mdData).length + 1;
+    double height = getTextSize(context, mdData, _textStyle).height * dataLength + 30;
     return Container(
       padding: const EdgeInsets.all(10),
+      width: MediaQuery.of(context).size.width,
+      height: height,
       decoration: BoxDecoration(
         border: Border.all(color: Colors.grey),
-        borderRadius: const BorderRadius.all(Radius.circular(20)),
+        borderRadius: const BorderRadius.all(Radius.circular(10)),
         color: Colors.grey[50],
       ),
-      child: Row(
-        children: [
-          SelectableText(mdData, style: const TextStyle(fontFamily: "D2Coding"),),
-          Expanded(child: Container()),
-        ],
+      child: AdaptiveScrollbar(
+        position: ScrollbarPosition.bottom,
+        controller: horizontalScroll,
+        width: 10,
+        scrollToClickDelta: globals.scrollToClickDelta,
+        scrollToClickFirstDelay: globals.scrollToClickFirstDelay,
+        scrollToClickOtherDelay: globals.scrollToClickOtherDelay,
+        sliderDecoration: globals.sliderDecoration,
+        sliderActiveDecoration: globals.sliderActiveDecoration,
+        underColor: Colors.transparent,
+        child: SingleChildScrollView(
+          controller: horizontalScroll,
+          scrollDirection: Axis.horizontal,
+          child: SelectableText(mdData, style: _textStyle,),
+        ),
       ),
     );
   }

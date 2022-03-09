@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import 'package:markdown_table_generator/gloabals.dart' as globals;
+import 'package:markdown_table_generator/globals.dart' as globals;
 import '../my_div.dart';
 import '../table_manager/table_helper.dart';
 

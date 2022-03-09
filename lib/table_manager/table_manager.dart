@@ -3,7 +3,7 @@ import '../menus/csv_converter.dart';
 import 'package:adaptive_scrollbar/adaptive_scrollbar.dart';
 import 'dart:math';
 
-import 'package:markdown_table_generator/gloabals.dart' as globals;
+import 'package:markdown_table_generator/globals.dart' as globals;
 import 'package:markdown_table_generator/my_enums.dart';
 import 'mouse_drag_selectable/mouse_drag_selectable.dart';
 import 'cell/cell_helper.dart';
@@ -37,14 +37,6 @@ class TableManagerState extends State<TableManager> {
   final ScrollController horizontalScroll = ScrollController();
   final ScrollController verticalScroll = ScrollController();
   final double _scrollBarWidth = 16;
-  final BoxDecoration _sliderDecoration = BoxDecoration(
-      color: Colors.blueGrey.withOpacity(0.2),
-      borderRadius: const BorderRadius.all(Radius.circular(12.0))
-  );
-  final BoxDecoration _sliderActiveDecoration = BoxDecoration(
-      color: Colors.blueGrey.withOpacity(0.5),
-      borderRadius: const BorderRadius.all(Radius.circular(12.0))
-  );
 
   @override
   void initState(){
@@ -395,19 +387,19 @@ s ---------
     return AdaptiveScrollbar(
         controller: verticalScroll,
         width: _scrollBarWidth,
-        scrollToClickDelta: 75,
-        scrollToClickFirstDelay: 200,
-        scrollToClickOtherDelay: 50,
-        sliderDecoration: _sliderDecoration,
-        sliderActiveDecoration: _sliderActiveDecoration,
+        scrollToClickDelta: globals.scrollToClickDelta,
+        scrollToClickFirstDelay: globals.scrollToClickFirstDelay,
+        scrollToClickOtherDelay: globals.scrollToClickOtherDelay,
+        sliderDecoration: globals.sliderDecoration,
+        sliderActiveDecoration: globals.sliderActiveDecoration,
         underColor: Colors.transparent,
         child: AdaptiveScrollbar(
             underSpacing: EdgeInsets.only(bottom: _scrollBarWidth),
             controller: horizontalScroll,
             width: _scrollBarWidth,
             position: ScrollbarPosition.bottom,
-            sliderDecoration: _sliderDecoration,
-            sliderActiveDecoration: _sliderActiveDecoration,
+            sliderDecoration: globals.sliderDecoration,
+            sliderActiveDecoration: globals.sliderActiveDecoration,
             underColor: Colors.transparent,
             child: SingleChildScrollView(
                 controller: horizontalScroll,

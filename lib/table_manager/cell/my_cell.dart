@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 
-import 'package:markdown_table_generator/gloabals.dart' as globals;
+import 'package:markdown_table_generator/globals.dart' as globals;
 import 'package:markdown_table_generator/my_enums.dart';
+import 'package:markdown_table_generator/get_text_size.dart';
 import 'input_link_inkwell.dart';
 import 'cell_key_generator.dart';
 import '../key_table.dart';
@@ -136,15 +137,7 @@ class MyCellState extends State<MyCell> {
 
   int getKeyNum() => cellKey;
 
-  Size getTextSize(String text, TextStyle textStyle){
-    return (TextPainter(
-        text: TextSpan(text: text, style: textStyle),
-        maxLines: 1,
-        textScaleFactor: MediaQuery.of(context).textScaleFactor,
-        textDirection: TextDirection.ltr)
-      ..layout())
-        .size;
-  }
+
 
   TextStyle _makeTextStyle() => TextStyle(
     fontSize: 16,
@@ -155,7 +148,7 @@ class MyCellState extends State<MyCell> {
     color: _textColors[_isLink],
   );
 
-  Size getSize() => getTextSize(_textController.text, _makeTextStyle());
+  Size getSize() => getTextSize(context, _textController.text, _makeTextStyle());
 
   double getHeight() => _textHeight * linesNum + 50;
 
@@ -302,7 +295,7 @@ class MyCellState extends State<MyCell> {
   @override
   Widget build(BuildContext context) {
     _textHeight = getSize().height;
-    _listingWidth = getTextSize("00.", _makeTextStyle()).width;
+    _listingWidth = getTextSize(context, "00.", _makeTextStyle()).width;
     globals.widthMargin = _listingWidth + 40;
     return Stack(
       children: [
