@@ -1,7 +1,7 @@
 import 'dart:math';
 import 'package:flutter/material.dart';
 
-import 'package:markdown_table_generator/gloabals.dart' as globals;
+import 'package:markdown_table_generator/globals.dart' as globals;
 import 'package:markdown_table_generator/my_enums.dart';
 import 'cell/my_cell.dart';
 import 'cell/cell_helper.dart';
