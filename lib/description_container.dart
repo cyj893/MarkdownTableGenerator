@@ -19,6 +19,7 @@ class DescriptionContainer extends StatelessWidget {
         mainAxisAlignment: MainAxisAlignment.center,
         children: const [
           Text("Non commercial | Released under the MIT License"),
+          Text("Ver 0.1"),
         ],
       ),
     );
