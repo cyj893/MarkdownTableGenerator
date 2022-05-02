@@ -53,7 +53,7 @@
 | **Add/Delete Column**	 | <ul><li>add column to the left</li><li>add column to the right</li><li>delete column</li></ul>	 | 	 |
 | **Align**	 | <ul><li>left</li><li>center</li><li>right</li></ul>	 | <ul><li>`:--`</li><li>`:--:`</li><li>`--:`</li></ul>	 |
 | **Text Deco / Link**	 | <ul><li>bold</li><li>italic</li><li>strikethrough</li><li>code</li><li>clear all deco</li><li>make link</li></ul>	 | <ul><li>`**bold**`</li><li>`_italic_`</li><li>`~~strikethrough~~`</li><li>``code``</li><li></li><li>`[make link](address)`</li></ul>	 |
-| **Listing**	 | <ul><li>no listing</li><li>unordered listing</li><li>ordered listing</li></ul>	 | <ul><li></li><li>`<ul><li></li></ul>`</li><li>`<ol><li></li></ol>`</li></ul>	 |
+| **Multiline**	 | <ul><li>no multiline</li><li>multiline</li><li>unordered listing</li><li>ordered listing</li></ul>	 | <ul><li></li><li>`<br>`</li><li>`<ul><li></li></ul>`</li><li>`<ol><li></li></ol>`</li></ul>	 |
 | **Upload CSV**	 | upload *.csv file	 | 	 |
 | **Clear**	 | clear table	 | 	 |
 
