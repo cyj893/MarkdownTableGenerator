@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:markdown_table_generator/globals.dart' as globals;
 import 'package:markdown_table_generator/my_enums.dart';
 import 'package:markdown_table_generator/get_text_size.dart';
+import 'package:markdown_table_generator/table_manager/cell/multiline_manager.dart';
 import 'input_link_inkwell.dart';
 import 'cell_key_generator.dart';
 import '../key_table.dart';
@@ -30,6 +31,7 @@ class MyCell extends StatefulWidget {
 class MyCellState extends State<MyCell> {
 
   final KeyTable _keyTable = KeyTable();
+  final MultiLineManager _listingManager = MultiLineManager();
 
   int cellKey = -1;
 
@@ -37,16 +39,10 @@ class MyCellState extends State<MyCell> {
   double _height = 0;
   double _beforeTextWidth = 0.0;
   double _textHeight = 0.0;
-  double _listingWidth = 0.0;
-  int linesNum = 1;
 
-  final TextEditingController _listingController = TextEditingController();
   final TextEditingController _linkController = TextEditingController();
   final TextEditingController _textController = TextEditingController();
   final FocusNode _focusNode = FocusNode();
-
-  String unorderedListingStr = "●";
-  String orderedListingStr = "1.";
 
   FocusColor _focused = FocusColor.none;
   Alignments _alignment = Alignments.center;
@@ -55,7 +51,6 @@ class MyCellState extends State<MyCell> {
   int _strike = 0;
   int _codeColor = 0;
   int _isLink = 0;
-  Listings _listing = Listings.none;
 
   final List<Color> _focusedColors = [Colors.white, Colors.blue[50]!.withOpacity(0.3), Colors.blue[50]!];
   final List<TextAlign> _alignments = [TextAlign.left, TextAlign.center, TextAlign.right];
@@ -126,18 +121,13 @@ class MyCellState extends State<MyCell> {
   }
 
   void changeListing(Listings listing){
-    if( _listing == listing ) return ;
-    _listing = listing;
+    if( _listingManager.getListing() == listing ) return ;
     setState(() {
-      _listingController.text = _listing == Listings.unordered
-          ? unorderedListingStr
-          : orderedListingStr;
+      _listingManager.setListing(listing);
     });
   }
 
   int getKeyNum() => cellKey;
-
-
 
   TextStyle _makeTextStyle() => TextStyle(
     fontSize: 16,
@@ -150,10 +140,10 @@ class MyCellState extends State<MyCell> {
 
   Size getSize() => getTextSize(context, _textController.text, _makeTextStyle());
 
-  double getHeight() => _textHeight * linesNum + 50;
+  double getHeight() => _textHeight * _listingManager.getLinesNum() + globals.cellMargin;
 
   String makeListingHTML(){
-    String ret = _listing == Listings.unordered ? "<ul>" : "<ol>";
+    String ret = _listingManager.getListing() == Listings.unordered ? "<ul>" : "<ol>";
     List<String> list = _textController.text.split('\n');
     for(int i = 0; i < list.length; i++){
       if( _codeColor == 1 ){  // code deco should be inside
@@ -163,17 +153,17 @@ class MyCellState extends State<MyCell> {
         ret += "<li>${list[i]}</li>";
       }
     }
-    ret += _listing == Listings.unordered ? "</ul>" : "</ol>";
+    ret += _listingManager.getListing() == Listings.unordered ? "</ul>" : "</ol>";
     return ret;
   }
 
   String getMDText(){
     String ret = "";
-    ret = _listing != Listings.none
+    ret = _listingManager.getListing() != Listings.none
         ? makeListingHTML()
         : _textController.text.replaceAll('\n', "<br>");
     if( ret == "" ) return ret;
-    if( _listing == Listings.none && _codeColor == 1 ) ret = "`$ret`";
+    if( _listingManager.getListing() == Listings.none && _codeColor == 1 ) ret = "`$ret`";
     if( _fontWeight == 1 ) ret = "**$ret**";
     if( _fontStyle == 1 ) ret = "_${ret}_";
     if( _strike == 1 ) ret = "~~$ret~~";
@@ -183,36 +173,17 @@ class MyCellState extends State<MyCell> {
 
   Alignments getAlignment() => _alignment;
 
-  void addListing(int changedLinesNum){
-    for(int i = linesNum+1; i <= changedLinesNum; i++){
-      unorderedListingStr +=  "\n●";
-      orderedListingStr +=  "\n$i.";
-    }
-  }
-
-  void subListing(int changedLinesNum){
-    int unorderedSubIndex = 2 * (linesNum - changedLinesNum);
-    unorderedListingStr = unorderedListingStr.substring(0, unorderedListingStr.length - unorderedSubIndex);
-    int orderedSubIndex = 0;
-    for(int i = changedLinesNum+1; i <= linesNum; i++){
-      orderedSubIndex += 2 + i.toString().length;
-    }
-    orderedListingStr = orderedListingStr.substring(0, orderedListingStr.length - orderedSubIndex);
-  }
-
   void checkHeightChanged(String string){
     int changedLinesNum = '\n'.allMatches(string).length + 1;
-    if( changedLinesNum == linesNum ) return ;
-    if( changedLinesNum > linesNum ){
-      addListing(changedLinesNum);
+    if( changedLinesNum == _listingManager.getLinesNum() ) return ;
+    if( changedLinesNum > _listingManager.getLinesNum() ){
+      _listingManager.addListing(changedLinesNum);
     }
     else{
-      subListing(changedLinesNum);
+      _listingManager.subListing(changedLinesNum);
     }
-    _listingController.text = _listing == Listings.unordered
-        ? unorderedListingStr
-        : orderedListingStr;
-    linesNum = changedLinesNum;
+    setState(() {});
+    _listingManager.setLinesNum(changedLinesNum);
   }
 
   void checkWidthChanged(String string){
@@ -221,16 +192,6 @@ class MyCellState extends State<MyCell> {
     if( _beforeTextWidth <= widget.initialWidth && nowTextWidth <= widget.initialWidth ) return ;
     _beforeTextWidth = nowTextWidth;
   }
-
-  Widget makeListingField() => SizedBox(
-      width: _listing != Listings.none ? _listingWidth + 10 : 0,
-      child: TextField(
-        keyboardType: TextInputType.multiline,
-        maxLines: null,
-        controller: _listingController,
-        enabled: false,
-      )
-  );
 
   Widget makeTextField() => TextField(
     keyboardType: TextInputType.multiline,
@@ -249,7 +210,7 @@ class MyCellState extends State<MyCell> {
       _keyTable.resizeTableHeight(indexes[0]);
       _keyTable.resizeTableWidth(indexes[1]);
     },
-    textAlign: _alignments[_listing != Listings.none ? 0 : _alignment.index],
+    textAlign: _alignments[_alignment.index],
     style: _makeTextStyle(),
   );
 
@@ -265,7 +226,7 @@ class MyCellState extends State<MyCell> {
       alignment: Alignment.center,
       child: Row(
         children: [
-          makeListingField(),
+          _listingManager.makeListingField(),
           Expanded(child: makeTextField()),
         ],
       ),
@@ -295,8 +256,8 @@ class MyCellState extends State<MyCell> {
   @override
   Widget build(BuildContext context) {
     _textHeight = getSize().height;
-    _listingWidth = getTextSize(context, "00.", _makeTextStyle()).width;
-    globals.widthMargin = _listingWidth + 40;
+    _listingManager.setWidth(getTextSize(context, "00.", _makeTextStyle()).width);
+    globals.widthMargin = _listingManager.getWidth() + globals.cellMargin;
     return Stack(
       children: [
         buildCell(),

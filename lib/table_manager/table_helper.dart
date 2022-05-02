@@ -24,12 +24,7 @@ class TableHelper {
   void deleteColumn() => tableKey.currentState!.deleteColumn();
 
   void setAlignment(Alignments alignment) => tableKey.currentState!.setAlignment(alignment);
-  void changeCellBold() => tableKey.currentState!.changeCellDeco(CellHelper.changeBold);
-  void changeCellItalic() => tableKey.currentState!.changeCellDeco(CellHelper.changeItalic);
-  void changeCellStrike() => tableKey.currentState!.changeCellDeco(CellHelper.changeStrike);
-  void changeCellCode() => tableKey.currentState!.changeCellDeco(CellHelper.changeCode);
-  void changeCellLink() => tableKey.currentState!.changeCellDeco(CellHelper.changeLink);
-  void clearCellDeco() => tableKey.currentState!.changeCellDeco(CellHelper.clearDeco);
+  void changeCellDeco(CellDecoChange cellDecoChange) => tableKey.currentState!.changeCellDeco(cellDecoChange);
   void changeListing(Listings listing) => tableKey.currentState!.changeListing(listing);
 
   void readFromCSV(String csvStr) => tableKey.currentState!.readFromCSV(csvStr);

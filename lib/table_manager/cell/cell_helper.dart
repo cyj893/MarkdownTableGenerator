@@ -17,13 +17,31 @@ class CellHelper {
   static void setHeight(GlobalKey<MyCellState> cellKey, double height) => cellKey.currentState?.setHeight(height);
 
   static void setFocusedColor(GlobalKey<MyCellState> cellKey, FocusColor focused) => cellKey.currentState?.setFocusedColor(focused);
+  static void changeDeco(GlobalKey<MyCellState> cellKey, CellDecoChange cellDecoChange){
+    switch (cellDecoChange) {
+      case CellDecoChange.bold:
+        cellKey.currentState?.changeBold();
+        break;
+      case CellDecoChange.italic:
+        cellKey.currentState?.changeItalic();
+        break;
+      case CellDecoChange.strike:
+        cellKey.currentState?.changeStrike();
+        break;
+      case CellDecoChange.code:
+        cellKey.currentState?.changeCode();
+        break;
+      case CellDecoChange.link:
+        cellKey.currentState?.changeLink();
+        break;
+      case CellDecoChange.clearAll:
+        cellKey.currentState?.clearDeco();
+        break;
+      default:
+        debugPrint("Error");
+    }
+  }
   static void changeAlignment(GlobalKey<MyCellState> cellKey, Alignments alignment) => cellKey.currentState?.changeAlignment(alignment);
-  static void changeBold(GlobalKey<MyCellState> cellKey) => cellKey.currentState?.changeBold();
-  static void changeItalic(GlobalKey<MyCellState> cellKey) => cellKey.currentState?.changeItalic();
-  static void changeStrike(GlobalKey<MyCellState> cellKey) => cellKey.currentState?.changeStrike();
-  static void changeCode(GlobalKey<MyCellState> cellKey) => cellKey.currentState?.changeCode();
-  static void changeLink(GlobalKey<MyCellState> cellKey) => cellKey.currentState?.changeLink();
-  static void clearDeco(GlobalKey<MyCellState> cellKey) => cellKey.currentState?.clearDeco();
   static void changeListing(GlobalKey<MyCellState> cellKey, Listings listing) => cellKey.currentState?.changeListing(listing);
 
 }
