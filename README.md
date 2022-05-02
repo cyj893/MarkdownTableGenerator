@@ -12,7 +12,7 @@
 
 <br>
 
-| **Now Ver 0.1 abvailable [here](cyj893.github.io/markdown_table_generator/).** |
+| **Now v0.1.2-beta abvailable [here](https://cyj893.github.io/markdown_table_generator/).** |
 | - |
 
 <br>
