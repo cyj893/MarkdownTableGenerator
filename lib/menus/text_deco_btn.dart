@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../my_div.dart';
 import '../table_manager/table_helper.dart';
+import '../my_enums.dart';
 
 class TextDecoBtn extends StatelessWidget {
 
@@ -16,29 +17,29 @@ class TextDecoBtn extends StatelessWidget {
       children: [
         IconButton(
             tooltip: "bold",
-            onPressed: () { TableHelper().changeCellBold(); },
+            onPressed: () { TableHelper().changeCellDeco(CellDecoChange.bold); },
             icon: const Icon(Icons.format_bold_rounded)),
         IconButton(
             tooltip: "italic",
-            onPressed: () { TableHelper().changeCellItalic(); },
+            onPressed: () { TableHelper().changeCellDeco(CellDecoChange.italic); },
             icon: const Icon(Icons.format_italic_rounded)),
         IconButton(
             tooltip: "strikethrough",
-            onPressed: () { TableHelper().changeCellStrike(); },
+            onPressed: () { TableHelper().changeCellDeco(CellDecoChange.strike); },
             icon: const Icon(Icons.strikethrough_s_rounded)),
         IconButton(
             tooltip: "code",
-            onPressed: () { TableHelper().changeCellCode(); },
+            onPressed: () { TableHelper().changeCellDeco(CellDecoChange.code); },
             icon: const Icon(Icons.code_rounded)),
         verticalDiv(10),
         IconButton(
             tooltip: "clear",
-            onPressed: () { TableHelper().clearCellDeco(); },
+            onPressed: () { TableHelper().changeCellDeco(CellDecoChange.clearAll); },
             icon: const Icon(Icons.clear_rounded)),
         verticalDiv(10),
         IconButton(
             tooltip: "link",
-            onPressed: () { TableHelper().changeCellLink(); },
+            onPressed: () { TableHelper().changeCellDeco(CellDecoChange.link); },
             icon: const Icon(Icons.link_rounded)),
       ],
     );

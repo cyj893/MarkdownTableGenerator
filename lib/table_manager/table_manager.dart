@@ -201,19 +201,19 @@ class TableManagerState extends State<TableManager> {
     }
   }
 
-  void changeCellDeco(Function func) {
+  void changeCellDeco(CellDecoChange cellDecoChange) {
     if( isSelecting ){
       for(int i = 0; i < selectedCells.length; i++){
-        func(_keyTable.table[selectedCells[i][0]][selectedCells[i][1]]);
+        CellHelper.changeDeco(_keyTable.table[selectedCells[i][0]][selectedCells[i][1]], cellDecoChange);
       }
       return ;
     }
     List<int> pos = _keyTable.findFocusedCell();
     if( pos.isEmpty ){
-      debugPrint("Error changeCellDeco: $func");
+      debugPrint("Error changeCellDeco: $cellDecoChange");
       return ;
     }
-    func(_keyTable.table[pos[0]][pos[1]]);
+    CellHelper.changeDeco(_keyTable.table[pos[0]][pos[1]], cellDecoChange);
   }
 
   void changeListing(Listings listing) {
